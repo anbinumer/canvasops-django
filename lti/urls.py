@@ -3,4 +3,5 @@ from . import views
 
 urlpatterns = [
     path('launch/', views.lti_launch, name='lti_launch'),
+    path('tools/', views.tool_selection, name='tool_selection'),
 ]
