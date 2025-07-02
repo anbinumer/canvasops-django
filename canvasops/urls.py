@@ -1,12 +1,10 @@
-from django.contrib import admin
-from django.urls import path, include
-from django.http import HttpResponse
-
-def home(request):
-    return HttpResponse("CanvasOps Django LTI - Coming Soon!")
+from django.urls import path
+from . import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', home, name='home'),
-    path('lti/', include('lti.urls')),
+    path('config/', views.lti_config, name='lti_config'),
+    path('login/', views.lti_login, name='lti_login'),
+    path('launch/', views.lti_launch, name='lti_launch'),
+    path('jwks/', views.lti_jwks, name='lti_jwks'),
+    path('tools/', views.tool_selection, name='tool_selection'),
 ]
