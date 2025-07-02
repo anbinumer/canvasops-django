@@ -6,5 +6,5 @@ urlpatterns = [
     path('launch/', views.lti_launch, name='lti_launch'),
     path('jwks/', views.lti_jwks, name='lti_jwks'),
     path('tools/', views.tool_selection, name='tool_selection'),
-    path('config/', views.lti_config_xml, name='lti_config'),
+    path('config/', views.lti_config, name='lti_config'),
 ]
