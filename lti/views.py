@@ -6,7 +6,7 @@ from pylti1p3.tool_config import ToolConfJsonFile
 from pylti1p3.message_launch import MessageLaunch
 from pylti1p3.oidc_login import OIDCLogin
 from pylti1p3.exception import LtiException
-from Cryptodome.PublicKey import RSA
+from Crypto.PublicKey import RSA
 import json
 import uuid
 import base64
