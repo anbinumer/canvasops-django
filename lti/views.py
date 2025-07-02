@@ -115,3 +115,34 @@ def lti_config(request):
     </blti:extensions>
 </cartridge_basiclti_link>'''
     return HttpResponse(xml_config, content_type='application/xml')
+
+def lti_config_json(request):
+    """Provide LTI 1.3 JSON configuration for Canvas"""
+    config = {
+        "title": "CanvasOps",
+        "description": "Canvas Automation Tools for ACU",
+        "oidc_initiation_url": "https://canvasops-django-production.up.railway.app/lti/login/",
+        "target_link_uri": "https://canvasops-django-production.up.railway.app/lti/launch/",
+        "public_jwk_url": "https://canvasops-django-production.up.railway.app/lti/jwks/",
+        "scopes": [
+            "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem",
+            "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly",
+            "https://purl.imsglobal.org/spec/lti-ags/scope/score"
+        ],
+        "extensions": {
+            "platform": "canvas.instructure.com",
+            "settings": {
+                "placements": [
+                    {
+                        "placement": "course_navigation",
+                        "message_type": "LtiResourceLinkRequest",
+                        "target_link_uri": "https://canvasops-django-production.up.railway.app/lti/launch/",
+                        "text": "CanvasOps",
+                        "icon_url": "https://canvasops-django-production.up.railway.app/static/icon.png"
+                    }
+                ]
+            }
+        },
+        "custom_fields": {}
+    }
+    return JsonResponse(config)

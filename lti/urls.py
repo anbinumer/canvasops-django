@@ -7,4 +7,5 @@ urlpatterns = [
     path('jwks/', views.lti_jwks, name='lti_jwks'),
     path('tools/', views.tool_selection, name='tool_selection'),
     path('config/', views.lti_config, name='lti_config'),
+    path('config_json/', views.lti_config_json, name='lti_config_json'),
 ]
