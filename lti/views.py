@@ -3,8 +3,8 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.sessions.models import Session
 from pylti1p3.tool_config import ToolConfJsonFile
-from pylti1p3.message_launch import DjangoMessageLaunch
-from pylti1p3.oidc_login import DjangoOIDCLogin
+from pylti1p3.message_launch import MessageLaunch
+from pylti1p3.oidc_login import OIDCLogin
 from pylti1p3.exception import LtiException
 from Cryptodome.PublicKey import RSA
 import json
@@ -18,7 +18,7 @@ def lti_launch(request):
     try:
         # Initialize LTI message launch
         tool_config = get_tool_config()
-        message_launch = DjangoMessageLaunch(request, tool_config)
+        message_launch = MessageLaunch(request, tool_config)
         message_launch_data = message_launch.get_launch_data()
         
         # Extract Canvas user and course info
@@ -48,7 +48,7 @@ def lti_login(request):
     """Handle OIDC login initiation"""
     try:
         tool_config = get_tool_config()
-        oidc_login = DjangoOIDCLogin(request, tool_config)
+        oidc_login = OIDCLogin(request, tool_config)
         return oidc_login.redirect()
     except LtiException as e:
         return HttpResponse(f"OIDC Login Error: {str(e)}", status=400)
@@ -73,15 +73,16 @@ def lti_jwks(request):
 def get_or_create_private_key():
     """Get or create RSA private key"""
     key_path = "/tmp/canvas_ops_private.key"
-    
     if os.path.exists(key_path):
-        with open(key_path, 'r') as f:
+        with open(key_path, 'rb') as f:
             key_data = f.read()
         return RSA.import_key(key_data)
     else:
         key = RSA.generate(2048)
-        with open(key_path, 'w') as f:
-            f.write(key.export_key().decode())
+        with open(key_path, 'wb') as f:
+            f.write(key.export_key())
+        return key
+
 def tool_selection(request):
     """Show available tools to user"""
     if 'lti_session_id' not in request.session:
