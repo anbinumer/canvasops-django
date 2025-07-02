@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CanvasOps - Tool Selection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header { border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px; }
+        .tool-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .tool-card { border: 1px solid #ddd; border-radius: 8px; padding: 20px; background: #f9f9f9; }
+        .tool-card h3 { margin-top: 0; color: #333; }
+        .tool-card p { color: #666; margin-bottom: 15px; }
+        .btn { background: #dc3545; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn:hover { background: #c82333; }
+        .user-info { background: #e9ecef; padding: 10px; border-radius: 4px; margin-bottom: 20px; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CanvasOps - Canvas Automation Tools</h1>
+            <div class="user-info">
+                <strong>Canvas User:</strong> {{ canvas_user_id }}<br>
+                <strong>Course:</strong> {{ canvas_course_id }}<br>
+                <strong>Roles:</strong> {{ canvas_roles|join:", " }}
+            </div>
+        </div>
+
+        <div class="tool-grid">
+            <div class="tool-card">
+                <h3>Find & Replace URLs</h3>
+                <p>Search for specific URLs in course content and replace them with new ones.</p>
+                <a href="#" class="btn">Run Tool</a>
+            </div>
+
+            <div class="tool-card">
+                <h3>Link Checker</h3>
+                <p>Scan course content for broken or invalid links.</p>
+                <a href="#" class="btn">Run Tool</a>
+            </div>
+
+            <div class="tool-card">
+                <h3>Due Date Audit</h3>
+                <p>List and optionally fix assignment and quiz due dates.</p>
+                <a href="#" class="btn">Run Tool</a>
+            </div>
+
+            <div class="tool-card">
+                <h3>Navigation Cleaner</h3>
+                <p>Check and clean up course navigation menu items.</p>
+                <a href="#" class="btn">Run Tool</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
