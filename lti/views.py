@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.sessions.models import Session
 from pylti1p3.tool_config import ToolConfJsonFile
-from pylti1p3.message_launch import DjangoMessageLaunch
+from pylti1p3.message_launch import MessageLaunch
 from pylti1p3.oidc_login import DjangoOIDCLogin
 from pylti1p3.exception import LtiException
 from Cryptodome.PublicKey import RSA
@@ -18,7 +18,7 @@ def lti_launch(request):
     try:
         # Initialize LTI message launch
         tool_config = get_tool_config()
-        message_launch = DjangoMessageLaunch(request, tool_config)
+        message_launch = MessageLaunch(request, tool_config)
         message_launch_data = message_launch.get_launch_data()
         
         # Extract Canvas user and course info
