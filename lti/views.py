@@ -6,9 +6,7 @@ from pylti1p3.tool_config import ToolConfJsonFile
 from pylti1p3.message_launch import DjangoMessageLaunch
 from pylti1p3.oidc_login import DjangoOIDCLogin
 from pylti1p3.exception import LtiException
-from Crypto.PublicKey import RSA
-from Crypto.Hash import SHA256
-from Crypto.Signature import pkcs1_15
+from Cryptodome.PublicKey import RSA
 import json
 import uuid
 import base64
