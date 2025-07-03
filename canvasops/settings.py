@@ -126,7 +126,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # LTI Configuration
 LTI_CONFIG = {
     'https://aculeo.beta.instructure.com': {
-        'client_id': os.getenv('CANVAS_CLIENT_ID'),
+        'client_id': os.getenv('CANVAS_CLIENT_ID', '226430000000000273'),
         'auth_login_url': 'https://aculeo.beta.instructure.com/api/lti/authorize_redirect',
         'auth_token_url': 'https://aculeo.beta.instructure.com/login/oauth2/token',
         'key_set_url': 'https://aculeo.beta.instructure.com/api/lti/security/jwks',
@@ -147,7 +147,7 @@ CACHES = {
 
 # Session configuration for LTI
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-SESSION_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'None'  # Required for LTI iframe
 SESSION_COOKIE_AGE = 86400  # 24 hours
@@ -159,6 +159,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://aculeo.beta.instructure.com',
     'https://canvasops-django-production.up.railway.app',
 ]
+CSRF_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = True
 
 # Additional security headers for Canvas embedding
 if not DEBUG:
@@ -168,6 +170,6 @@ if not DEBUG:
 
 # Security Settings
 SECURE_SSL_REDIRECT = not DEBUG
-SESSION_COOKIE_SECURE = not DEBUG
-CSRF_COOKIE_SECURE = not DEBUG
-X_FRAME_OPTIONS = 'SAMEORIGIN'  # Allow embedding in Canvas
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+X_FRAME_OPTIONS = 'ALLOWALL'  # Allow embedding in Canvas
