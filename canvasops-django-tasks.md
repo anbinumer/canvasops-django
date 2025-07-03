@@ -31,7 +31,7 @@ psycopg2-binary==2.9.9
 - [x] Create LTI launch view and authentication (initial import fix, MessageLaunch)
 - [ ] Set up Canvas Developer Key configuration
 - [ ] Implement basic LTI tool registration
-- [ ] Test LTI launch flow in Canvas sandbox
+- [x] Test LTI launch flow in Canvas sandbox
 
 ### Database Models
 - [x] Create UserSession model for Canvas user data (if started)
@@ -204,3 +204,15 @@ Each sprint is complete when:
 **Total Timeline: 8 weeks**
 **Team Size: 1-2 developers**
 **Infrastructure Cost: $0**
+
+## 📝 Retrospective & Lessons Learned
+
+- Use the latest compatible pylti1p3 version (2.0.0); older versions may fail to install or import.
+- Key generation and config file paths must match exactly.
+- All LTI config URLs must use the deployed app's HTTPS address.
+- Double-check Client ID and Deployment ID in both lti_config.json and Canvas Developer Key.
+- Enable debug logging for pylti1p3 in Django for troubleshooting.
+- Document every error and fix; most LTI issues are config-related.
+- Test each step in isolation before combining.
+- Canvas may cache Developer Key/app config—clear cache or re-add the app if changes don't show.
+- Plan for Railway free tier limitations (sleep, quotas) in dev and pilot phases.

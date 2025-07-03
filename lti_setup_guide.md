@@ -194,3 +194,28 @@ LOGGING = {
 - [Canvas LTI 1.3 Documentation](https://canvas.instructure.com/doc/api/file.lti_dev_key_config.html)
 - [PyLTI1.3 Documentation](https://github.com/dmitry-viskov/pylti1.3)
 - [IMS LTI 1.3 Specification](http://www.imsglobal.org/spec/lti/v1p3/)
+
+## Lessons Learned & Troubleshooting
+
+### Common Pitfalls
+- Using an incompatible pylti1p3 version (use 2.0.0 as of this project)
+- Incorrect or mismatched private/public key files or paths
+- LTI config URLs not matching deployed app's HTTPS address
+- Client ID and Deployment ID mismatches between Canvas and lti_config.json
+- Not using HTTPS for all LTI endpoints (causes SameSite/cookie issues)
+- Canvas caching Developer Key/app config (clear cache or re-add app)
+
+### Best Practices
+- Test LTI launch flow before building tool features
+- Store all secrets/config in Railway environment variables
+- Enable debug logging for pylti1p3 in Django
+- Document every error and fix
+- Use Railway/ngrok for quick HTTPS testing
+- Keep a checklist for Canvas Developer Key, LTI config, and environment variables
+
+### Troubleshooting Checklist
+- Double-check all config values (Client ID, Deployment ID, URLs)
+- Ensure keys are generated and referenced correctly
+- Use debug logs to trace LTI launch errors
+- If tool doesn't appear in Canvas, check placement config and clear cache
+- For connection errors, verify Railway app is awake and using HTTPS

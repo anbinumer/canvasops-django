@@ -16,6 +16,13 @@ CanvasOps is migrating from React prototype to production-ready Python/Django LT
 - **Canvas API SDK** for robust API interactions
 - **Production deployment** on cloud infrastructure
 
+### Lessons Learned & Best Practices
+- Use the latest compatible version of pylti1p3 (2.0.0 as of this project); older versions may not install or import correctly.
+- Always generate and reference the correct private/public keys. Ensure file names and paths match your config.
+- All LTI config URLs (login, launch, JWK) must match the deployed app's HTTPS URL exactly.
+- Double-check Client ID and Deployment ID in both lti_config.json and Canvas Developer Key.
+- For local testing, use ngrok or Railway HTTPS to avoid SameSite cookie and CORS issues.
+
 ---
 
 ## 🏗️ 2. Technical Architecture
@@ -284,6 +291,34 @@ class ExecutionLog(models.Model):
 - [ ] User role-based permissions enforced
 - [ ] Performance monitoring in place
 - [ ] Documentation complete
+
+---
+
+## 📝 15. Lessons Learned & Best Practices
+
+### LTI & Canvas Integration
+- Use the latest compatible version of pylti1p3 (2.0.0 as of this project); older versions may not install or import correctly.
+- Always generate and reference the correct private/public keys. Ensure file names and paths match your config.
+- All LTI config URLs (login, launch, JWK) must match the deployed app's HTTPS URL exactly.
+- Double-check Client ID and Deployment ID in both lti_config.json and Canvas Developer Key.
+- For local testing, use ngrok or Railway HTTPS to avoid SameSite cookie and CORS issues.
+
+### Django & Hosting
+- Store all secrets and config in Railway environment variables, not in code.
+- Be aware of Railway free tier limitations (sleep after inactivity, quotas).
+- Enable debug logging for pylti1p3 in Django settings for troubleshooting.
+
+### General Development
+- Document every error and fix; most LTI issues are config-related and cryptic.
+- Test each step (key generation, config, launch) in isolation before combining.
+- Sometimes Canvas caches Developer Key/app config—clear cache or re-add the app if changes don't show.
+
+### Best Practices for Future LTI Tools
+- Start with a working LTI 1.3 launch before building tool features.
+- Automate key generation and config file creation where possible.
+- Keep a checklist for Canvas Developer Key, LTI config, and environment variables.
+- Use Railway or similar for quick HTTPS deployment/testing.
+- Plan for free tier limitations in both dev and pilot phases.
 
 ---
 
