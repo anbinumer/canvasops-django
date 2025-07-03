@@ -125,14 +125,46 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # LTI Configuration
 LTI_CONFIG = {
-    'https://canvas.instructure.com': {
+    'https://aculeo.beta.instructure.com': {
         'client_id': os.getenv('CANVAS_CLIENT_ID'),
-        'auth_login_url': 'https://sso.canvaslms.com/api/lti/authorize_redirect',
-        'auth_token_url': 'https://sso.canvaslms.com/login/oauth2/token',
-        'key_set_url': 'https://sso.canvaslms.com/api/lti/security/jwks',
+        'auth_login_url': 'https://aculeo.beta.instructure.com/api/lti/authorize_redirect',
+        'auth_token_url': 'https://aculeo.beta.instructure.com/login/oauth2/token',
+        'key_set_url': 'https://aculeo.beta.instructure.com/api/lti/security/jwks',
         'private_key_file': 'private.key',
     }
 }
+
+# LTI 1.3 Configuration
+LTI_TOOL_CONFIG = os.path.join(BASE_DIR, 'lti_config.json')
+
+# Cache configuration for LTI data storage
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': REDIS_URL,
+    }
+}
+
+# Session configuration for LTI
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'None'  # Required for LTI iframe
+SESSION_COOKIE_AGE = 86400  # 24 hours
+
+# CSRF exemptions for LTI endpoints (handled by PyLTI1.3)
+CSRF_TRUSTED_ORIGINS = [
+    'https://canvas.instructure.com',
+    'https://*.instructure.com',
+    'https://aculeo.beta.instructure.com',
+    'https://canvasops-django-production.up.railway.app',
+]
+
+# Additional security headers for Canvas embedding
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    USE_X_FORWARDED_HOST = True
+    USE_X_FORWARDED_PORT = True
 
 # Security Settings
 SECURE_SSL_REDIRECT = not DEBUG

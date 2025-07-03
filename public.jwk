@@ -1,0 +1,12 @@
+{
+  "keys": [
+    {
+      "kty": "RSA",
+      "use": "sig",
+      "alg": "RS256",
+      "kid": "canvasops-key-1",
+      "n": "pPfHdN-7BUXKYFpmY02TBA-KPqCvovxFrCe32vcVKQC1PL2S7wdvfAosICmKQR1-TEjP-1W_lLlREXHG0c9_3WZGXJBAHIw39HPuFz6TwXKWcXvNucQ4AqLf_q7X6gmvYjAmnApdotWnuKUX6wTZQUFrvMi1zPVyk8vePS9gw0stJZ12qKJGf6CQh1ZzXxfMTDp2CGR-R53QS8fAtDm5X7-N7v-OzHnkRUG2pd2TQQkxUyy2aqli3ytwQ7vrAILTH9QtO36K9xLNSXO_pdqSRyEnnHkcX77hG8QGJ3e7rWUWZ0uaN0DrwHfshBEjXobytkZlIPIUb7IDIu5Ani2icQ",
+      "e": "AQAB"
+    }
+  ]
+}

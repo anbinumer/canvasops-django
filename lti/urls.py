@@ -2,10 +2,16 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('login/', views.lti_login, name='lti_login'),
-    path('launch/', views.lti_launch, name='lti_launch'),
-    path('jwks/', views.lti_jwks, name='lti_jwks'),
+    # LTI 1.3 endpoints
+    path('login/', views.login, name='lti_login'),
+    path('launch/', views.launch, name='lti_launch'),
+    path('jwks/', views.jwks, name='lti_jwks'),
+    
+    # Configuration endpoints
+    path('configure/', views.configure, name='lti_configure'),
+    path('xml/', views.xml_config, name='lti_xml_config'),
+    
+    # Tool interface
     path('tools/', views.tool_selection, name='tool_selection'),
-    path('config/', views.lti_config, name='lti_config'),
-    path('config_json/', views.lti_config_json, name='lti_config_json'),
+    path('submission-review/', views.submission_review, name='lti_submission_review'),
 ]
