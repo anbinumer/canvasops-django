@@ -273,3 +273,7 @@ def xml_config(request):
 </cartridge_basiclti_link>"""
     
     return HttpResponse(xml_config, content_type='application/xml')
+
+
+def login_get(request):
+    return HttpResponseRedirect('/tools/tool_selection/')
