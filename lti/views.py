@@ -132,7 +132,7 @@ def launch(request):
             return redirect('lti_submission_review')
         
         # Regular resource launch - redirect to tool selection
-        return redirect('tool_selection')
+        return redirect('/tool_selection/')
         
     except LtiException as e:
         return HttpResponse(f"LTI launch failed: {str(e)}", status=400)

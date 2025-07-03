@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-stone-100 to-stone-200 flex items-center justify-center p-4">
+  <div class="max-w-4xl w-full">
+    <div class="text-center mb-12">
+      <h1 class="text-5xl font-bold text-gray-900 mb-4">CanvasOps</h1>
+      <p class="text-xl text-stone-700 mb-2">Canvas Automation Platform for ACU</p>
+      <p class="text-stone-600">Streamline your Canvas course management with automated tools</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-8">
+      <a href="#" class="bg-white rounded-xl shadow-lg p-8 cursor-pointer hover:shadow-xl transition-shadow group block">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-red-200 transition-colors">
+            <span class="material-icons text-red-600" style="font-size:2rem;">play_arrow</span>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-900 mb-2">Run a Tool</h3>
+          <p class="text-stone-600 mb-4">Execute automation scripts on your Canvas courses</p>
+          <div class="text-sm text-stone-500">
+            <div>&bull; Link checking</div>
+            <div>&bull; Content updates</div>
+            <div>&bull; QA automation</div>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="bg-white rounded-xl shadow-lg p-8 cursor-pointer hover:shadow-xl transition-shadow group block">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-200 transition-colors">
+            <span class="material-icons text-purple-700" style="font-size:2rem;">upload</span>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-900 mb-2">Submit a Script</h3>
+          <p class="text-stone-600 mb-4">Contribute new automation tools to the platform</p>
+          <div class="text-sm text-stone-500">
+            <div>&bull; Share your scripts</div>
+            <div>&bull; AI validation</div>
+            <div>&bull; Peer review</div>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="bg-white rounded-xl shadow-lg p-8 cursor-pointer hover:shadow-xl transition-shadow group block">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-stone-300 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-stone-400 transition-colors">
+            <span class="material-icons text-stone-700" style="font-size:2rem;">security</span>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-900 mb-2">Admin Review</h3>
+          <p class="text-stone-600 mb-4">Review and approve submitted scripts</p>
+          <div class="text-sm text-stone-500">
+            <div>&bull; Script validation</div>
+            <div>&bull; Security review</div>
+            <div>&bull; Approval workflow</div>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="mt-12 text-center">
+      <p class="text-sm text-stone-500">
+        Secure &bull; Sandboxed &bull; API Token stays in memory only
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %} 
