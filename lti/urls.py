@@ -4,7 +4,6 @@ from . import views
 urlpatterns = [
     # LTI 1.3 endpoints
     path('login/', views.login, name='lti_login'),
-    path('login/', views.login_get, name='lti_login_get'),
     path('launch/', views.launch, name='lti_launch'),
     path('jwks/', views.jwks, name='lti_jwks'),
     

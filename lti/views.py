@@ -88,21 +88,19 @@ def get_tool_conf():
 
 
 @csrf_exempt
-@require_POST
 def login(request):
-    """LTI 1.3 OIDC login endpoint"""
+    if request.method == 'GET':
+        return HttpResponseRedirect('/tools/tool_selection/')
+    # Existing POST logic
     tool_conf = get_tool_conf()
     launch_data_storage = get_launch_data_storage()
-    
     oidc_login = DjangoOIDCLogin(
         request,
         tool_conf,
         launch_data_storage=launch_data_storage
     )
-    
     target_link_uri = request.POST.get('target_link_uri', 
                                        request.build_absolute_uri(reverse('lti_launch')))
-    
     return oidc_login.enable_check_cookies().redirect(target_link_uri)
 
 
@@ -273,7 +271,3 @@ def xml_config(request):
 </cartridge_basiclti_link>"""
     
     return HttpResponse(xml_config, content_type='application/xml')
-
-
-def login_get(request):
-    return HttpResponseRedirect('/tools/tool_selection/')
