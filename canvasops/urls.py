@@ -9,4 +9,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='home'),
     path('lti/', include('lti.urls')),
+    path('tools/', include('tools.urls')),
 ]
