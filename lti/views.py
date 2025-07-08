@@ -10,11 +10,11 @@ from pylti1p3.contrib.django import (
     DjangoCacheDataStorage
 )
 from pylti1p3.tool_config import ToolConfJsonFile
-# from pylti1p3.lineitem import LineItem
-# from pylti1p3.grade import Grade
-# from pylti1p3.resource_link import ResourceLink
-# from pylti1p3.submission_review import SubmissionReview
-# from pylti1p3.deep_link import DeepLink
+from pylti1p3.lineitem import LineItem
+from pylti1p3.grade import Grade
+from pylti1p3.resource_link import ResourceLink
+from pylti1p3.submission_review import SubmissionReview
+from pylti1p3.deep_link import DeepLink
 from pylti1p3.exception import LtiException, OIDCException
 import json
 import os

@@ -56,7 +56,7 @@ class LTIPlatform(TimestampedModel):
 
 class LTIDeployment(TimestampedModel):
     """Individual LTI deployment within a platform"""
-    platform = models.ForeignKey(LTIPlatform, on_delete=models.CASCADE, related_name='deployments')
+    platform = models.ForeignKey('LTIPlatform', on_delete=models.CASCADE, related_name='deployments')
     deployment_id = models.CharField(max_length=255)
     context_id = models.CharField(max_length=255, blank=True, help_text="Course/context ID")
     context_title = models.CharField(max_length=255, blank=True)
@@ -87,8 +87,8 @@ class LTISession(TimestampedModel):
     launch_id = models.CharField(max_length=255, unique=True)
     
     # Platform and deployment
-    platform = models.ForeignKey(LTIPlatform, on_delete=models.CASCADE)
-    deployment = models.ForeignKey(LTIDeployment, on_delete=models.CASCADE, null=True, blank=True)
+    platform = models.ForeignKey('LTIPlatform', on_delete=models.CASCADE)
+    deployment = models.ForeignKey('LTIDeployment', on_delete=models.CASCADE, null=True, blank=True)
     
     # User information
     user_id = models.CharField(max_length=255, db_index=True)  # Canvas user ID
@@ -149,7 +149,7 @@ class LTISession(TimestampedModel):
 
 class LTIGradeLineItem(TimestampedModel):
     """Line items created by the LTI tool"""
-    session = models.ForeignKey(LTISession, on_delete=models.CASCADE)
+    session = models.ForeignKey('LTISession', on_delete=models.CASCADE)
     line_item_id = models.CharField(max_length=255, unique=True)
     label = models.CharField(max_length=255)
     score_maximum = models.FloatField()
@@ -169,7 +169,7 @@ class LTIGradeLineItem(TimestampedModel):
 
 class LTIGradeSubmission(TimestampedModel):
     """Grade submissions made through AGS"""
-    line_item = models.ForeignKey(LTIGradeLineItem, on_delete=models.CASCADE)
+    line_item = models.ForeignKey('LTIGradeLineItem', on_delete=models.CASCADE)
     user_id = models.CharField(max_length=255, db_index=True)
     score_given = models.FloatField()
     score_maximum = models.FloatField()
@@ -208,7 +208,7 @@ class LTIAuditLog(TimestampedModel):
     ])
     
     # Context
-    session = models.ForeignKey(LTISession, on_delete=models.SET_NULL, null=True, blank=True)
+    session = models.ForeignKey('LTISession', on_delete=models.SET_NULL, null=True, blank=True)
     user_id = models.CharField(max_length=255, blank=True, db_index=True)
     context_id = models.CharField(max_length=255, blank=True, db_index=True)
     
