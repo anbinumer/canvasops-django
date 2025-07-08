@@ -126,7 +126,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # LTI Configuration
 LTI_CONFIG = {
     'https://aculeo.beta.instructure.com': {
-        'client_id': os.getenv('CANVAS_CLIENT_ID', '226430000000000273'),
+        'client_id': os.getenv('CANVAS_CLIENT_ID', '226430000000000272'),
         'auth_login_url': 'https://aculeo.beta.instructure.com/api/lti/authorize_redirect',
         'auth_token_url': 'https://aculeo.beta.instructure.com/login/oauth2/token',
         'key_set_url': 'https://aculeo.beta.instructure.com/api/lti/security/jwks',

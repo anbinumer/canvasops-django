@@ -28,8 +28,8 @@ Add these to your Railway environment:
 
 ```env
 # Canvas OAuth (from Developer Key)
-CANVAS_CLIENT_ID=170000000000001
-CANVAS_DEPLOYMENT_ID=1:8865aa05b4b79b64c91a87ba1179164d4bca3bd9
+CANVAS_CLIENT_ID=226430000000000272
+CANVAS_DEPLOYMENT_ID=2020:21ccbae6dc29eabcb50c0c0966d60ce6a98b21d8
 
 # Your Canvas instance URL (update this to your actual Canvas URL)
 CANVAS_INSTANCE_URL=https://aculeo.beta.instructure.com
@@ -43,7 +43,7 @@ Update your `lti_config.json` with your Canvas details:
 {
     "https://aculeo.beta.instructure.com": {
         "default": true,
-        "client_id": "YOUR_CLIENT_ID_HERE",
+        "client_id": "226430000000000272",
         "auth_login_url": "https://aculeo.beta.instructure.com/api/lti/authorize_redirect",
         "auth_token_url": "https://aculeo.beta.instructure.com/login/oauth2/token",
         "auth_audience": null,
@@ -51,7 +51,7 @@ Update your `lti_config.json` with your Canvas details:
         "key_set": null,
         "private_key_file": "private.key",
         "public_key_file": "public.key",
-        "deployment_ids": ["YOUR_DEPLOYMENT_ID"]
+        "deployment_ids": ["2020:21ccbae6dc29eabcb50c0c0966d60ce6a98b21d8"]
     }
 }
 ```
@@ -118,7 +118,7 @@ Configure Course Navigation:
 1. Go to **Admin → Settings → Apps**
 2. Click **+ App**
 3. Configuration Type: **By Client ID**
-4. Client ID: `YOUR_CLIENT_ID`
+4. Client ID: `226430000000000272`
 5. Click **Submit**
 
 ### As Instructor:
