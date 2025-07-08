@@ -46,6 +46,7 @@ psycopg2-binary==2.9.9
 - [x] Create ExecutionLog model for audit trail (if started)
 - [x] Run initial migrations
 - [x] Set up Django admin for data management
+- [x] Create and apply database migrations for production LTI models
 
 ## 🔧 Sprint 2: Core Features (2 weeks)
 
