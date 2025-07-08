@@ -191,6 +191,50 @@ def tool_selection(request):
     if 'canvas_user_id' not in request.session:
         return HttpResponse("Please launch this tool from Canvas", status=400)
     
+    # Tool definitions (port from React prototype)
+    tools = [
+        {
+            'id': 'link-checker',
+            'name': 'Link Checker',
+            'description': 'Scan course content for broken or invalid links',
+            'tags': ['QA', 'Links'],
+            'is_destructive': False,
+            'scope': 'Pages, Modules, Assignments, Announcements',
+        },
+        {
+            'id': 'find-replace',
+            'name': 'Find & Replace URLs',
+            'description': 'Search for specific URLs in course content and replace them with new ones',
+            'tags': ['QA', 'URLs', 'Content'],
+            'is_destructive': True,
+            'scope': 'Course content, modules, assignments, pages, quizzes, discussions',
+        },
+        {
+            'id': 'due-date-audit',
+            'name': 'Due Date Audit',
+            'description': 'List and optionally fix assignment and quiz due dates',
+            'tags': ['Dates'],
+            'is_destructive': False,
+            'scope': 'Assignments, Quizzes, Discussions',
+        },
+        {
+            'id': 'navigation-cleaner',
+            'name': 'Navigation Cleaner',
+            'description': 'Check and clean up course navigation menu items',
+            'tags': ['UX', 'Menus'],
+            'is_destructive': False,
+            'scope': 'Course Navigation',
+        },
+        {
+            'id': 'orphaned-pages',
+            'name': 'Orphaned Pages Finder',
+            'description': 'Find pages not linked in any module or navigation',
+            'tags': ['Pages'],
+            'is_destructive': False,
+            'scope': 'Course Pages and Modules',
+        },
+    ]
+    
     # Check user permissions based on Canvas roles
     canvas_roles = request.session.get('canvas_roles', [])
     is_instructor = any('Instructor' in role for role in canvas_roles)
@@ -204,6 +248,7 @@ def tool_selection(request):
         'is_instructor': is_instructor,
         'is_admin': is_admin,
         'canvas_url': request.session.get('canvas_url'),
+        'tools': tools,
     }
     
     return render(request, 'lti/tool_selection.html', context)

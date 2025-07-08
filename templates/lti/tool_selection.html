@@ -14,45 +14,35 @@
             <p class="text-stone-600">Streamline your Canvas course management with automated tools</p>
         </div>
         <div class="mb-8 flex flex-col md:flex-row md:space-x-6 space-y-4 md:space-y-0 items-center justify-center">
-            <div class="bg-white rounded-xl shadow-lg p-8 w-full md:w-1/3 flex flex-col items-center">
-                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
-                    <span class="material-icons text-red-600 text-4xl">play_arrow</span>
+            {% for tool in tools %}
+            <div class="bg-white rounded-xl shadow-lg p-8 w-full md:w-1/3 flex flex-col items-center" data-tool-id="{{ tool.id }}">
+                <div class="w-16 h-16 rounded-full flex items-center justify-center mb-4 {% if tool.id == 'link-checker' %}bg-red-100{% elif tool.id == 'find-replace' %}bg-purple-100{% elif tool.id == 'due-date-audit' %}bg-blue-100{% elif tool.id == 'navigation-cleaner' %}bg-green-100{% else %}bg-stone-300{% endif %}">
+                    {% if tool.id == 'link-checker' %}
+                        <span class="material-icons text-red-600 text-4xl">play_arrow</span>
+                    {% elif tool.id == 'find-replace' %}
+                        <span class="material-icons text-purple-700 text-4xl">upload</span>
+                    {% elif tool.id == 'due-date-audit' %}
+                        <span class="material-icons text-blue-700 text-4xl">event</span>
+                    {% elif tool.id == 'navigation-cleaner' %}
+                        <span class="material-icons text-green-700 text-4xl">menu</span>
+                    {% else %}
+                        <span class="material-icons text-stone-700 text-4xl">security</span>
+                    {% endif %}
                 </div>
-                <h3 class="text-xl font-semibold text-gray-900 mb-2">Run a Tool</h3>
-                <p class="text-stone-600 mb-4">Execute automation scripts on your Canvas courses</p>
-                <div class="text-sm text-stone-500 mb-4">
-                    <div>• Link checking</div>
-                    <div>• Content updates</div>
-                    <div>• QA automation</div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ tool.name }}</h3>
+                <p class="text-stone-600 mb-4">{{ tool.description }}</p>
+                <div class="flex flex-wrap gap-1 mb-4">
+                    {% for tag in tool.tags %}
+                        <span class="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded">{{ tag }}</span>
+                    {% endfor %}
                 </div>
-                <a href="#" class="inline-block bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700 transition">Run Tool</a>
+                <div class="text-xs text-stone-500 mb-4">Scope: {{ tool.scope }}</div>
+                {% if tool.is_destructive %}
+                    <div class="mb-2 px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded font-medium">DESTRUCTIVE</div>
+                {% endif %}
+                <a href="#" class="inline-block bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700 transition">Select</a>
             </div>
-            <div class="bg-white rounded-xl shadow-lg p-8 w-full md:w-1/3 flex flex-col items-center">
-                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-                    <span class="material-icons text-purple-700 text-4xl">upload</span>
-                </div>
-                <h3 class="text-xl font-semibold text-gray-900 mb-2">Submit a Script</h3>
-                <p class="text-stone-600 mb-4">Contribute new automation tools to the platform</p>
-                <div class="text-sm text-stone-500 mb-4">
-                    <div>• Share your scripts</div>
-                    <div>• AI validation</div>
-                    <div>• Peer review</div>
-                </div>
-                <a href="#" class="inline-block bg-purple-700 text-white px-4 py-2 rounded-md font-medium hover:bg-purple-800 transition">Submit Script</a>
-            </div>
-            <div class="bg-white rounded-xl shadow-lg p-8 w-full md:w-1/3 flex flex-col items-center">
-                <div class="w-16 h-16 bg-stone-300 rounded-full flex items-center justify-center mb-4">
-                    <span class="material-icons text-stone-700 text-4xl">security</span>
-                </div>
-                <h3 class="text-xl font-semibold text-gray-900 mb-2">Admin Review</h3>
-                <p class="text-stone-600 mb-4">Review and approve submitted scripts</p>
-                <div class="text-sm text-stone-500 mb-4">
-                    <div>• Script validation</div>
-                    <div>• Security review</div>
-                    <div>• Approval workflow</div>
-                </div>
-                <a href="#" class="inline-block bg-stone-700 text-white px-4 py-2 rounded-md font-medium hover:bg-stone-800 transition">Admin Review</a>
-            </div>
+            {% endfor %}
         </div>
         <div class="mt-12 text-center">
             <p class="text-sm text-stone-500">
