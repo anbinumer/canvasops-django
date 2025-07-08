@@ -99,6 +99,7 @@ psycopg2-binary==2.9.9
 - [ ] Create mobile-responsive layouts
 - [ ] Add loading states and error handling
 - [ ] Improve accessibility features
+- [x] Enhance landing page UI with Tailwind CSS (tools/tool_selection.html and lti/tool_selection.html)
 
 ## 🔒 Sprint 4: Security & Production (2 weeks)
 
@@ -216,3 +217,12 @@ Each sprint is complete when:
 - Test each step in isolation before combining.
 - Canvas may cache Developer Key/app config—clear cache or re-add the app if changes don't show.
 - Plan for Railway free tier limitations (sleep, quotas) in dev and pilot phases.
+
+## 📝 UI/UX Retrospective
+- Always verify which template is rendered for each route before making UI changes.
+- If multiple templates exist for similar pages, update all or unify them.
+- Commit, push, and redeploy after template changes.
+- Use Tailwind CSS CDN for rapid UI prototyping.
+- Hard refresh and clear cache after deployment.
+- For AI agents: Check view logic and template mapping before editing.
+- For humans: If changes don't show, check for template caching or path mismatches.

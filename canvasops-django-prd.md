@@ -23,6 +23,15 @@ CanvasOps is migrating from React prototype to production-ready Python/Django LT
 - Double-check Client ID and Deployment ID in both lti_config.json and Canvas Developer Key.
 - For local testing, use ngrok or Railway HTTPS to avoid SameSite cookie and CORS issues.
 
+### UI/UX Lessons Learned (Landing Page)
+- Always confirm which Django template is being rendered for each route before making UI changes. Use codebase search or view logic to verify.
+- If multiple apps (e.g., 'tools' and 'lti') have similarly named templates, update all relevant files or unify them to avoid confusion.
+- After updating templates, always commit, push, and redeploy before checking production.
+- Use Tailwind CSS via CDN for rapid prototyping and modern UI, but ensure the CDN link is present in the deployed template.
+- Hard refresh the browser and clear any CDN or platform cache after deployment to see changes.
+- For AI agents: Always check both the view logic and template directory structure before making UI edits. Document which template is mapped to which route.
+- For human developers: If changes don't show up, check for template caching, static file issues, or mismatched template paths.
+
 ---
 
 ## 🏗️ 2. Technical Architecture
@@ -319,6 +328,15 @@ class ExecutionLog(models.Model):
 - Keep a checklist for Canvas Developer Key, LTI config, and environment variables.
 - Use Railway or similar for quick HTTPS deployment/testing.
 - Plan for free tier limitations in both dev and pilot phases.
+
+### UI/UX Lessons Learned (Landing Page)
+- Always confirm which Django template is being rendered for each route before making UI changes. Use codebase search or view logic to verify.
+- If multiple apps (e.g., 'tools' and 'lti') have similarly named templates, update all relevant files or unify them to avoid confusion.
+- After updating templates, always commit, push, and redeploy before checking production.
+- Use Tailwind CSS via CDN for rapid prototyping and modern UI, but ensure the CDN link is present in the deployed template.
+- Hard refresh the browser and clear any CDN or platform cache after deployment to see changes.
+- For AI agents: Always check both the view logic and template directory structure before making UI edits. Document which template is mapped to which route.
+- For human developers: If changes don't show up, check for template caching, static file issues, or mismatched template paths.
 
 ---
 
