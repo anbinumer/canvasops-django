@@ -10,11 +10,6 @@ from pylti1p3.contrib.django import (
     DjangoCacheDataStorage
 )
 from pylti1p3.tool_config import ToolConfJsonFile
-from pylti1p3.lineitem import LineItem
-from pylti1p3.grade import Grade
-from pylti1p3.resource_link import ResourceLink
-from pylti1p3.submission_review import SubmissionReview
-from pylti1p3.deep_link import DeepLink
 from pylti1p3.exception import LtiException, OIDCException
 import json
 import os
@@ -172,25 +167,8 @@ def configure(request):
     """Deep linking configuration endpoint"""
     if 'lti_launch_data' not in request.session:
         return HttpResponse("No active LTI session", status=400)
-    
-    tool_conf = get_tool_conf()
-    launch_data_storage = get_launch_data_storage()
-    
-    message_launch = ExtendedDjangoMessageLaunch(
-        request,
-        tool_conf,
-        launch_data_storage=launch_data_storage
-    )
-    
-    resource = DeepLink()
-    resource.set_url(request.build_absolute_uri(reverse('lti_launch'))) \
-            .set_title("CanvasOps Tools")
-    
-    # Create deep link response
-    deep_link = message_launch.get_deep_link()
-    deep_link.output_response_form([resource])
-    
-    return HttpResponse(deep_link.get_response_html())
+    # For now, just return a placeholder response
+    return HttpResponse("Deep linking configuration is not yet implemented.")
 
 
 def submission_review(request):
