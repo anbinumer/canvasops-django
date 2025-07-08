@@ -132,6 +132,8 @@ dmypy.json
 private.key
 *.key
 !public.key
+private.key.b64
+*.key
 
 # Environment variables
 .env

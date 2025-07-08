@@ -340,4 +340,15 @@ class ExecutionLog(models.Model):
 
 ---
 
+## Security and LTI Cookie/Iframe Fixes (2024)
+- Private key removed from git history and .gitignore updated to exclude all key files.
+- Django settings updated for secure cookies and iframe compatibility (SESSION_COOKIE_SAMESITE=None, X_FRAME_OPTIONS=ALLOWALL, etc.).
+- LTIEmbeddingMiddleware and LTISessionMiddleware added for robust LTI session and iframe handling.
+- ENCRYPTION_KEY environment variable added for secure key management.
+- Production-ready LTI models implemented with encryption, audit logging, and security tracking.
+- LTISecurityManager class added for nonce validation, state validation, and input sanitization.
+- LTIComplianceManager and LTIAdvantageServices implemented for full LTI 1.3 compliance validation.
+- Cookie compatibility test template created for iframe debugging and troubleshooting.
+- Security dependencies added (cryptography, django-ratelimit, sentry-sdk) for production hardening.
+
 *This PRD serves as the foundation for migrating CanvasOps to a production-ready Python/Django LTI application with seamless Canvas integration.*

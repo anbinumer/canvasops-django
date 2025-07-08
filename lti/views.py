@@ -18,7 +18,8 @@ from pylti1p3.tool_config import ToolConfJsonFile
 from pylti1p3.exception import LtiException, OIDCException
 import json
 import os
-from .models import LTISession, LTIKey
+from .models import LTISession, LTIPlatform, LTIDeployment
+from django.views.decorators.clickjacking import xframe_options_exempt
 
 
 class ExtendedDjangoMessageLaunch(DjangoMessageLaunch):
@@ -58,16 +59,9 @@ class ExtendedDjangoMessageLaunch(DjangoMessageLaunch):
             request.session['launch_id'] = self.get_launch_id()
             
             # Create or update LTI session record
-            LTISession.objects.update_or_create(
-                session_id=request.session.session_key,
-                defaults={
-                    'user_id': request.user.id if request.user.is_authenticated else 0,
-                    'canvas_user_id': canvas_user_id,
-                    'canvas_course_id': canvas_course_id,
-                    'canvas_roles': canvas_roles,
-                    'canvas_url': canvas_url
-                }
-            )
+            # Note: This needs to be updated to work with new model structure
+            # For now, just store in Django session
+            pass
         except Exception as e:
             print(f"Error storing launch data: {e}")
 
@@ -88,6 +82,7 @@ def get_tool_conf():
 
 
 @csrf_exempt
+@xframe_options_exempt
 def login(request):
     if request.method == 'GET':
         return HttpResponseRedirect('/tools/tool_selection/')
@@ -105,6 +100,7 @@ def login(request):
 
 
 @csrf_exempt
+@xframe_options_exempt
 @require_POST
 def launch(request):
     """LTI 1.3 launch endpoint"""

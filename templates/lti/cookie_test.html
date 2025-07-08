@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LTI Cookie Compatibility Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .test-result { transition: all 0.3s ease; }
+        .test-result.pass { background-color: #dcfce7; border-color: #22c55e; }
+        .test-result.fail { background-color: #fef2f2; border-color: #ef4444; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto">
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h1 class="text-2xl font-bold text-gray-900 mb-6">
+                    LTI Cookie Compatibility Test
+                </h1>
+                
+                <div class="space-y-6">
+                    <!-- Test Status -->
+                    <div id="test-status" class="test-result border-2 rounded-lg p-4">
+                        <h2 class="text-lg font-semibold mb-2">Test Status</h2>
+                        <p id="status-text">Running compatibility tests...</p>
+                    </div>
+                    
+                    <!-- Test Results -->
+                    <div id="test-results" class="space-y-4">
+                        <div class="test-result border rounded-lg p-4">
+                            <h3 class="font-semibold">1. SameSite Cookie Support</h3>
+                            <p id="samesite-result">Testing...</p>
+                        </div>
+                        
+                        <div class="test-result border rounded-lg p-4">
+                            <h3 class="font-semibold">2. Secure Cookie Support</h3>
+                            <p id="secure-result">Testing...</p>
+                        </div>
+                        
+                        <div class="test-result border rounded-lg p-4">
+                            <h3 class="font-semibold">3. Iframe Embedding</h3>
+                            <p id="iframe-result">Testing...</p>
+                        </div>
+                        
+                        <div class="test-result border rounded-lg p-4">
+                            <h3 class="font-semibold">4. Session Persistence</h3>
+                            <p id="session-result">Testing...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Manual Test -->
+                    <div class="border rounded-lg p-4 bg-gray-50">
+                        <h3 class="font-semibold mb-3">Manual Cookie Test</h3>
+                        <p class="text-sm text-gray-600 mb-3">
+                            Click the button below to test if cookies work in this iframe context.
+                        </p>
+                        <button id="manual-test" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                            Test Cookie Setting
+                        </button>
+                        <div id="manual-result" class="mt-3 text-sm"></div>
+                    </div>
+                    
+                    <!-- Recommendations -->
+                    <div id="recommendations" class="border rounded-lg p-4 bg-yellow-50 hidden">
+                        <h3 class="font-semibold text-yellow-800 mb-2">Recommendations</h3>
+                        <ul id="recommendation-list" class="text-sm text-yellow-700 space-y-1">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test results tracking
+        let testResults = {
+            samesite: false,
+            secure: false,
+            iframe: false,
+            session: false
+        };
+        
+        // Check if running in iframe
+        function checkIframe() {
+            try {
+                return window !== window.top;
+            } catch (e) {
+                return true;
+            }
+        }
+        
+        // Test cookie support
+        function testCookieSupport() {
+            const testCookie = 'lti_test_cookie';
+            const testValue = 'test_value_' + Date.now();
+            
+            try {
+                // Try to set a cookie
+                document.cookie = `${testCookie}=${testValue}; SameSite=None; Secure; Path=/`;
+                
+                // Check if cookie was set
+                const cookies = document.cookie.split(';');
+                const found = cookies.some(cookie => 
+                    cookie.trim().startsWith(testCookie + '=')
+                );
+                
+                // Clean up
+                document.cookie = `${testCookie}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/`;
+                
+                return found;
+            } catch (e) {
+                console.error('Cookie test failed:', e);
+                return false;
+            }
+        }
+        
+        // Test session storage
+        function testSessionStorage() {
+            try {
+                const testKey = 'lti_session_test';
+                const testValue = 'session_test_' + Date.now();
+                
+                sessionStorage.setItem(testKey, testValue);
+                const retrieved = sessionStorage.getItem(testKey);
+                sessionStorage.removeItem(testKey);
+                
+                return retrieved === testValue;
+            } catch (e) {
+                console.error('Session storage test failed:', e);
+                return false;
+            }
+        }
+        
+        // Update test result display
+        function updateTestResult(testName, passed, message) {
+            const element = document.getElementById(testName + '-result');
+            const container = element.parentElement;
+            
+            if (passed) {
+                container.classList.add('pass');
+                container.classList.remove('fail');
+                element.innerHTML = `✅ ${message}`;
+            } else {
+                container.classList.add('fail');
+                container.classList.remove('pass');
+                element.innerHTML = `❌ ${message}`;
+            }
+            
+            testResults[testName] = passed;
+        }
+        
+        // Run all tests
+        function runTests() {
+            // Test 1: SameSite Cookie Support
+            const cookieWorks = testCookieSupport();
+            updateTestResult('samesite', cookieWorks, 
+                cookieWorks ? 'SameSite=None cookies are supported' : 'SameSite=None cookies are not supported');
+            
+            // Test 2: Secure Cookie Support
+            const isSecure = window.location.protocol === 'https:';
+            updateTestResult('secure', isSecure, 
+                isSecure ? 'HTTPS is enabled (required for secure cookies)' : 'HTTPS is not enabled');
+            
+            // Test 3: Iframe Embedding
+            const inIframe = checkIframe();
+            updateTestResult('iframe', inIframe, 
+                inIframe ? 'Running in iframe context' : 'Not running in iframe context');
+            
+            // Test 4: Session Storage
+            const sessionWorks = testSessionStorage();
+            updateTestResult('session', sessionWorks, 
+                sessionWorks ? 'Session storage is available' : 'Session storage is not available');
+            
+            // Update overall status
+            const allPassed = Object.values(testResults).every(result => result);
+            const statusElement = document.getElementById('test-status');
+            const statusText = document.getElementById('status-text');
+            
+            if (allPassed) {
+                statusElement.classList.add('pass');
+                statusElement.classList.remove('fail');
+                statusText.textContent = 'All tests passed! LTI should work properly in this environment.';
+            } else {
+                statusElement.classList.add('fail');
+                statusElement.classList.remove('pass');
+                statusText.textContent = 'Some tests failed. LTI may have compatibility issues.';
+                
+                // Show recommendations
+                showRecommendations();
+            }
+        }
+        
+        // Show recommendations for failed tests
+        function showRecommendations() {
+            const recommendations = [];
+            
+            if (!testResults.samesite) {
+                recommendations.push('Enable SameSite=None cookie support in your browser');
+            }
+            
+            if (!testResults.secure) {
+                recommendations.push('Use HTTPS for LTI launches (required for secure cookies)');
+            }
+            
+            if (!testResults.iframe) {
+                recommendations.push('Launch LTI tool in iframe context for proper testing');
+            }
+            
+            if (!testResults.session) {
+                recommendations.push('Enable session storage in your browser');
+            }
+            
+            if (recommendations.length > 0) {
+                const container = document.getElementById('recommendations');
+                const list = document.getElementById('recommendation-list');
+                
+                list.innerHTML = recommendations.map(rec => `<li>• ${rec}</li>`).join('');
+                container.classList.remove('hidden');
+            }
+        }
+        
+        // Manual test button
+        document.getElementById('manual-test').addEventListener('click', function() {
+            const result = document.getElementById('manual-result');
+            result.textContent = 'Testing...';
+            
+            fetch('/lti/cookie-test/', {
+                method: 'POST',
+                credentials: 'include'
+            })
+            .then(response => response.text())
+            .then(data => {
+                result.textContent = '✅ ' + data;
+            })
+            .catch(error => {
+                result.textContent = '❌ Test failed: ' + error.message;
+            });
+        });
+        
+        // Run tests when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(runTests, 500); // Small delay to ensure page is fully loaded
+        });
+    </script>
+</body>
+</html> 

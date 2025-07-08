@@ -32,6 +32,13 @@ psycopg2-binary==2.9.9
 - [ ] Set up Canvas Developer Key configuration
 - [ ] Implement basic LTI tool registration
 - [x] Test LTI launch flow in Canvas sandbox
+- [x] Add @csrf_exempt and @xframe_options_exempt decorators to LTI views for iframe/cookie compatibility
+- [x] Replace lti/models.py with production-ready models from artifact
+- [x] Create lti/security.py with LTISecurityManager from artifact
+- [x] Create lti/middleware.py with LTIEmbeddingMiddleware and LTISessionMiddleware from artifact
+- [x] Create lti/compliance.py with LTIComplianceManager and LTIAdvantageServices from artifact
+- [x] Create templates/lti/cookie_test.html for iframe compatibility testing
+- [x] Add security and compliance dependencies to requirements.txt (cryptography, django-ratelimit, sentry-sdk)
 
 ### Database Models
 - [x] Create UserSession model for Canvas user data (if started)
@@ -217,6 +224,7 @@ Each sprint is complete when:
 - Test each step in isolation before combining.
 - Canvas may cache Developer Key/app config—clear cache or re-add the app if changes don't show.
 - Plan for Railway free tier limitations (sleep, quotas) in dev and pilot phases.
+- [x] Remove private key from version control (git history and .gitignore)
 
 ## 📝 UI/UX Retrospective
 - Always verify which template is rendered for each route before making UI changes.

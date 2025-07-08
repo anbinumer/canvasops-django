@@ -31,7 +31,9 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'lti.middleware.LTIEmbeddingMiddleware',  # Add this first
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'lti.middleware.LTISessionMiddleware',     # Add this after sessions
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -149,8 +151,9 @@ CACHES = {
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = 'None'  # Required for LTI iframe
-SESSION_COOKIE_AGE = 86400  # 24 hours
+SESSION_COOKIE_SAMESITE = 'None'  # CRITICAL for iframe
+SESSION_COOKIE_AGE = 86400
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 # CSRF exemptions for LTI endpoints (handled by PyLTI1.3)
 CSRF_TRUSTED_ORIGINS = [
@@ -173,3 +176,6 @@ SECURE_SSL_REDIRECT = not DEBUG
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 X_FRAME_OPTIONS = 'ALLOWALL'  # Allow embedding in Canvas
+
+# Environment variables
+ENCRYPTION_KEY = os.getenv('ENCRYPTION_KEY')
