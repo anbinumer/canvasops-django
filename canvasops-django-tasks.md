@@ -235,3 +235,10 @@ Each sprint is complete when:
 - Hard refresh and clear cache after deployment.
 - For AI agents: Check view logic and template mapping before editing.
 - For humans: If changes don't show, check for template caching or path mismatches.
+
+## Lessons Learnt
+
+- If a Django view renders a template that expects session variables, always provide default values in the context to avoid 500 errors when session data is missing.
+- Having multiple templates with the same name (e.g., tool_selection.html) in both project-level and app-level directories can cause ambiguity. Remove or rename unused templates to ensure Django uses the correct one.
+- Always check the server logs (not just HTTP logs) for Python tracebacks to diagnose 500 errors.
+- After making changes to template locations or context, redeploy and test the affected views to confirm the fix.
