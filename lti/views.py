@@ -112,6 +112,10 @@ def launch(request):
         # Validate the launch
         message_launch.validate()
         
+        # Debug: print session key and data
+        print("[DEBUG] Session key after launch:", request.session.session_key)
+        print("[DEBUG] Session data after launch:", dict(request.session))
+        
         # Check if this is a deep linking request
         if message_launch.is_deep_link_launch():
             return redirect('lti_configure')
