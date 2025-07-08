@@ -79,9 +79,7 @@ def get_tool_conf():
 @csrf_exempt
 @xframe_options_exempt
 def login(request):
-    if request.method == 'GET':
-        return HttpResponseRedirect('/lti/tools/')
-    # Existing POST logic
+    # Always use OIDC login flow for both GET and POST
     tool_conf = get_tool_conf()
     launch_data_storage = get_launch_data_storage()
     oidc_login = DjangoOIDCLogin(
@@ -89,8 +87,7 @@ def login(request):
         tool_conf,
         launch_data_storage=launch_data_storage
     )
-    target_link_uri = request.POST.get('target_link_uri', 
-                                       request.build_absolute_uri(reverse('lti_launch')))
+    target_link_uri = request.build_absolute_uri(reverse('lti_launch'))
     return oidc_login.enable_check_cookies().redirect(target_link_uri)
 
 
