@@ -133,7 +133,15 @@ LTI_CONFIG = {
         'auth_token_url': 'https://aculeo.beta.instructure.com/login/oauth2/token',
         'key_set_url': 'https://aculeo.beta.instructure.com/api/lti/security/jwks',
         'private_key_file': 'private.key',
-    }
+    },
+    'https://canvas.beta.instructure.com': {
+        'client_id': '226430000000000272',
+        'deployment_id': '2020:21ccbae6dc29eabcb50c0c0966d60ce6a98b21d8',
+        'auth_login_url': 'https://canvas.beta.instructure.com/api/lti/authorize_redirect',
+        'auth_token_url': 'https://canvas.beta.instructure.com/login/oauth2/token',
+        'key_set_url': 'https://canvas.beta.instructure.com/api/lti/security/jwks',
+        'private_key_file': 'private.key',
+    },
 }
 
 # LTI 1.3 Configuration
