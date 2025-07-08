@@ -80,7 +80,7 @@ def get_tool_conf():
 @xframe_options_exempt
 def login(request):
     if request.method == 'GET':
-        return HttpResponseRedirect('/tools/tool_selection/')
+        return HttpResponseRedirect('/lti/tool_selection/')
     # Existing POST logic
     tool_conf = get_tool_conf()
     launch_data_storage = get_launch_data_storage()
@@ -121,7 +121,7 @@ def launch(request):
             return redirect('lti_submission_review')
         
         # Regular resource launch - redirect to tool selection
-        return redirect('/tool_selection/')
+        return redirect('/lti/tool_selection/')
         
     except LtiException as e:
         return HttpResponse(f"LTI launch failed: {str(e)}", status=400)
