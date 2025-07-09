@@ -77,18 +77,25 @@ def get_tool_conf():
 
 
 @csrf_exempt
-@xframe_options_exempt
 def login(request):
-    # Always use OIDC login flow for both GET and POST
-    tool_conf = get_tool_conf()
-    launch_data_storage = get_launch_data_storage()
-    oidc_login = DjangoOIDCLogin(
-        request,
-        tool_conf,
-        launch_data_storage=launch_data_storage
-    )
-    target_link_uri = request.build_absolute_uri(reverse('lti_launch'))
-    return oidc_login.enable_check_cookies().redirect(target_link_uri)
+    """Handle OIDC login initiation"""
+    try:
+        tool_conf = get_tool_conf()
+        launch_data_storage = get_launch_data_storage()
+        oidc_login = DjangoOIDCLogin(
+            request,
+            tool_conf,
+            launch_data_storage=launch_data_storage
+        )
+        # Use the target_link_uri from the request if present
+        target_link_uri = request.GET.get('target_link_uri')
+        if not target_link_uri:
+            # Fallback to default if not provided
+            from django.urls import reverse
+            target_link_uri = request.build_absolute_uri(reverse('lti_launch'))
+        return oidc_login.enable_check_cookies().redirect(target_link_uri)
+    except LtiException as e:
+        return HttpResponse(f"OIDC Login Error: {str(e)}", status=400)
 
 
 @csrf_exempt
