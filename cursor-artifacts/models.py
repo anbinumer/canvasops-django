@@ -35,7 +35,7 @@ class LTIAuditLog(TimestampedModel):
     ])
     
     # Context
-    session = models.ForeignKey(LTISession, on_delete=models.SET_NULL, null=True, blank=True)
+    session = models.ForeignKey('LTISession', on_delete=models.SET_NULL, null=True, blank=True)
     user_id = models.CharField(max_length=255, blank=True, db_index=True)
     context_id = models.CharField(max_length=255, blank=True, db_index=True)
     
@@ -191,12 +191,7 @@ class Command(BaseCommand):
             self.style.SUCCESS(
                 f'Cleaned {session_count} expired sessions and {log_count} old audit logs'
             )
-        ):
-        abstract = True
-
-class LTIPlatform(TimestampedModel):
-    """LTI Platform (Canvas instance) configuration"""
-    name = models.CharField(max_length=255)
+        )
     issuer = models.URLField(unique=True, validators=[URLValidator()])
     client_id = models.CharField(max_length=255)
     deployment_ids = models.JSONField(default=list, help_text="List of deployment IDs")
@@ -236,7 +231,7 @@ class LTIPlatform(TimestampedModel):
 
 class LTIDeployment(TimestampedModel):
     """Individual LTI deployment within a platform"""
-    platform = models.ForeignKey(LTIPlatform, on_delete=models.CASCADE, related_name='deployments')
+    platform = models.ForeignKey('LTIPlatform', on_delete=models.CASCADE, related_name='deployments')
     deployment_id = models.CharField(max_length=255)
     context_id = models.CharField(max_length=255, blank=True, help_text="Course/context ID")
     context_title = models.CharField(max_length=255, blank=True)
@@ -268,8 +263,8 @@ class LTISession(TimestampedModel):
     launch_id = models.CharField(max_length=255, unique=True)
     
     # Platform and deployment
-    platform = models.ForeignKey(LTIPlatform, on_delete=models.CASCADE)
-    deployment = models.ForeignKey(LTIDeployment, on_delete=models.CASCADE, null=True, blank=True)
+    platform = models.ForeignKey('LTIPlatform', on_delete=models.CASCADE)
+    deployment = models.ForeignKey('LTIDeployment', on_delete=models.CASCADE, null=True, blank=True)
     
     # User information
     user_id = models.CharField(max_length=255, db_index=True)  # Canvas user ID
@@ -330,7 +325,7 @@ class LTISession(TimestampedModel):
 
 class LTIGradeLineItem(TimestampedModel):
     """Line items created by the LTI tool"""
-    session = models.ForeignKey(LTISession, on_delete=models.CASCADE)
+    session = models.ForeignKey('LTISession', on_delete=models.CASCADE)
     line_item_id = models.CharField(max_length=255, unique=True)
     label = models.CharField(max_length=255)
     score_maximum = models.FloatField()
@@ -350,7 +345,7 @@ class LTIGradeLineItem(TimestampedModel):
 
 class LTIGradeSubmission(TimestampedModel):
     """Grade submissions made through AGS"""
-    line_item = models.ForeignKey(LTIGradeLineItem, on_delete=models.CASCADE)
+    line_item = models.ForeignKey('LTIGradeLineItem', on_delete=models.CASCADE)
     user_id = models.CharField(max_length=255, db_index=True)
     score_given = models.FloatField()
     score_maximum = models.FloatField()
@@ -365,4 +360,13 @@ class LTIGradeSubmission(TimestampedModel):
     response_status = models.CharField(max_length=10, blank=True)  # HTTP status
     response_data = models.JSONField(default=dict)
     
-    class Meta
+    class Meta:
+        unique_together = ('line_item', 'user_id')
+        indexes = [
+            models.Index(fields=['user_id']),
+            models.Index(fields=['submission_timestamp']),
+            models.Index(fields=['grading_progress']),
+        ]
+    
+    def __str__(self):
+        return f"Grade: {self.score_given}/{self.score_maximum} for {self.user_id}"

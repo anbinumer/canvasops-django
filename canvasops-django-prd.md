@@ -338,6 +338,38 @@ class ExecutionLog(models.Model):
 - For AI agents: Always check both the view logic and template directory structure before making UI edits. Document which template is mapped to which route.
 - For human developers: If changes don't show up, check for template caching, static file issues, or mismatched template paths.
 
+### 2025 Update: First-Time Developer Checklist & Troubleshooting
+
+**Environment Variables:**
+- Always set `DATABASE_URL` using actual values, not placeholders. Example:
+  `postgres://myuser:mypassword@myhost:5432/mydatabase`
+- Do not use `postgres://PGUSER:PGPASSWORD@PGHOST:PGPORT/PGDATABASE` (these are placeholders, not real values).
+- Ensure all required secrets (e.g., `SECRET_KEY`, `ENCRYPTION_KEY`, `REDIS_URL`, Canvas LTI keys) are present in your deployment environment.
+
+**Django Middleware Order:**
+- `SessionMiddleware` must come **before** any middleware that accesses `request.session` (e.g., `LTIEmbeddingMiddleware`).
+- If you see `'WSGIRequest' object has no attribute 'session'`, check your `MIDDLEWARE` order in `settings.py`.
+
+**Template Troubleshooting:**
+- If you have multiple apps with templates of the same name, Django may render the wrong one. Remove duplicates or use app-specific template paths.
+- If template changes don't show up, check for browser cache, CDN cache, or template path mismatches.
+
+**Deployment Tips:**
+- After changing environment variables or settings, always redeploy your app.
+- Use Railway logs to debug 500 errors—most are due to misconfigured environment variables or database issues.
+- If you see a database connection error, double-check your `DATABASE_URL` and database credentials.
+
+**LTI Launch Debugging:**
+- If the LTI tool launches but shows a blank or error page, check for session/cookie issues and ensure your app is served over HTTPS.
+- Use the `/tools/tool_selection/` endpoint as a basic health check for LTI launches.
+
+**General Advice:**
+- Document every error and its fix for future developers.
+- Keep a copy of this checklist in your repo or onboarding docs.
+- Test each step (key generation, config, launch) in isolation before combining.
+
+*Following this checklist will help future developers get CanvasOps LTI running smoothly on the first attempt!*
+
 ---
 
 ## Security and LTI Cookie/Iframe Fixes (2024)

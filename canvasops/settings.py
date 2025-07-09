@@ -135,12 +135,12 @@ LTI_CONFIG = {
         'private_key_file': 'private.key',
     },
     'https://canvas.beta.instructure.com': {
-        'client_id': '226430000000000272',
+        'client_id': os.getenv('CANVAS_CLIENT_ID', '226430000000000272'),
         'deployment_id': '2020:21ccbae6dc29eabcb50c0c0966d60ce6a98b21d8',
         'auth_login_url': 'https://canvas.beta.instructure.com/api/lti/authorize_redirect',
         'auth_token_url': 'https://canvas.beta.instructure.com/login/oauth2/token',
         'key_set_url': 'https://canvas.beta.instructure.com/api/lti/security/jwks',
-        'private_key_file': 'private.key',
+        'private_key_file': '/tmp/canvas_ops_private.key',
     },
 }
 
@@ -168,6 +168,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://canvas.instructure.com',
     'https://*.instructure.com',
     'https://aculeo.beta.instructure.com',
+    'https://canvas.beta.instructure.com',
     'https://canvasops-django-production.up.railway.app',
 ]
 CSRF_COOKIE_SAMESITE = 'None'
