@@ -40,7 +40,11 @@
                 {% if tool.is_destructive %}
                     <div class="mb-2 px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded font-medium">DESTRUCTIVE</div>
                 {% endif %}
-                <a href="#" class="inline-block bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700 transition">Select</a>
+                {% if tool.id == 'find-replace' %}
+                    <a href="{% url 'find_replace_tool' %}" class="inline-block bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700 transition">Select</a>
+                {% else %}
+                    <a href="#" class="inline-block bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700 transition">Select</a>
+                {% endif %}
             </div>
             {% endfor %}
         </div>
