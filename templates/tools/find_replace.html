@@ -13,13 +13,25 @@
         <h3 class="text-lg font-semibold text-[#6B2C6B] mb-2">What would you like to find?</h3>
         <div class="flex gap-4 mb-2">
           <label class="flex items-center gap-1 cursor-pointer">
-            <input type="radio" name="content_type" value="url" checked class="accent-[#4A1A4A]"> <span class="text-[#4A1A4A]">🔗 URLs</span>
+            <input type="checkbox" name="content_type" value="url" class="accent-[#4A1A4A]"> 
+            <span class="text-[#4A1A4A]">
+              <svg xmlns="http://www.w3.org/2000/svg" class="inline w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 010 5.656l-3.535 3.535a4 4 0 01-5.657-5.657l1.414-1.414" /></svg>
+              URLs
+            </span>
           </label>
           <label class="flex items-center gap-1 cursor-pointer">
-            <input type="radio" name="content_type" value="text" class="accent-[#4A1A4A]"> <span class="text-[#4A1A4A]">📝 Text Content</span>
+            <input type="checkbox" name="content_type" value="text" class="accent-[#4A1A4A]"> 
+            <span class="text-[#4A1A4A]">
+              <svg xmlns="http://www.w3.org/2000/svg" class="inline w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8M8 12h8m-8-4h8" /></svg>
+              Text Content
+            </span>
           </label>
           <label class="flex items-center gap-1 cursor-pointer">
-            <input type="radio" name="content_type" value="iframe" class="accent-[#4A1A4A]"> <span class="text-[#4A1A4A]">🖼️ Embedded Content</span>
+            <input type="checkbox" name="content_type" value="iframe" class="accent-[#4A1A4A]"> 
+            <span class="text-[#4A1A4A]">
+              <svg xmlns="http://www.w3.org/2000/svg" class="inline w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="3" y="7" width="18" height="10" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+              Embedded Content
+            </span>
           </label>
         </div>
         <input type="text" name="search_value" placeholder="Enter value to find" required class="w-full px-3 py-2 border border-[#6B2C6B] rounded focus:ring-[#4A1A4A] focus:border-[#4A1A4A]">
@@ -27,14 +39,15 @@
       <!-- Step 2: Scope Definition -->
       <div>
         <h3 class="text-lg font-semibold text-[#6B2C6B] mb-2">Where should I look? <span class="text-[#F4B942] font-normal">I'll scan carefully for you</span></h3>
-        <div class="flex flex-wrap gap-3 mb-2">
+        <div class="flex flex-wrap gap-3 mb-2" id="areas-checkboxes">
+          <button type="button" id="toggle-areas" class="text-xs text-[#4A1A4A] underline mr-2">Deselect All</button>
           <label><input type="checkbox" name="areas" value="pages" checked class="accent-[#4A1A4A]"> Pages</label>
           <label><input type="checkbox" name="areas" value="syllabus" checked class="accent-[#4A1A4A]"> Syllabus</label>
-          <label><input type="checkbox" name="areas" value="assignments" class="accent-[#4A1A4A]"> Assignments</label>
-          <label><input type="checkbox" name="areas" value="discussions" class="accent-[#4A1A4A]"> Discussions</label>
-          <label><input type="checkbox" name="areas" value="quizzes" class="accent-[#4A1A4A]"> Quizzes</label>
-          <label><input type="checkbox" name="areas" value="announcements" class="accent-[#4A1A4A]"> Announcements</label>
-          <label><input type="checkbox" name="areas" value="modules" class="accent-[#4A1A4A]"> Modules</label>
+          <label><input type="checkbox" name="areas" value="assignments" checked class="accent-[#4A1A4A]"> Assignments</label>
+          <label><input type="checkbox" name="areas" value="discussions" checked class="accent-[#4A1A4A]"> Discussions</label>
+          <label><input type="checkbox" name="areas" value="quizzes" checked class="accent-[#4A1A4A]"> Quizzes</label>
+          <label><input type="checkbox" name="areas" value="announcements" checked class="accent-[#4A1A4A]"> Announcements</label>
+          <label><input type="checkbox" name="areas" value="modules" checked class="accent-[#4A1A4A]"> Modules</label>
         </div>
         <div class="mt-2">
           <h4 class="font-semibold text-[#6B2C6B]">Course Scope</h4>
@@ -43,6 +56,8 @@
             <label><input type="radio" name="scope" value="multiple" class="accent-[#4A1A4A]"> Select specific courses</label>
             <label><input type="radio" name="scope" value="subaccount" class="accent-[#4A1A4A]"> Entire subaccount</label>
           </div>
+          <input type="text" name="course_ids" id="course_ids" placeholder="Enter course IDs, comma-separated" class="w-full px-3 py-2 border border-[#6B2C6B] rounded mt-2 hidden" autocomplete="off">
+          <input type="text" name="subaccount_id" id="subaccount_id" placeholder="Enter subaccount ID" class="w-full px-3 py-2 border border-[#6B2C6B] rounded mt-2 hidden" autocomplete="off">
         </div>
       </div>
       <!-- Step 3: Environment & Action Selection -->
@@ -56,11 +71,38 @@
           <h3 class="text-lg font-semibold text-[#6B2C6B] mb-2">What would you like to do?</h3>
           <label class="block mb-1"><input type="radio" name="action" value="preview" checked class="accent-[#4A1A4A]"> <span class="text-[#4A1A4A]">Preview Only <span class="bg-[#F4B942] text-[#4A1A4A] px-2 py-0.5 rounded ml-1">Safe</span></span></label>
           <label class="block mb-1"><input type="radio" name="action" value="replace" class="accent-[#D2492A]"> <span class="text-[#D2492A]">Find and Replace</span></label>
-          <label class="block"><input type="radio" name="action" value="delete" class="accent-[#B8391F]"> <span class="text-[#B8391F]">Find and Delete <span class="bg-[#F4B942] text-[#B8391F] px-2 py-0.5 rounded ml-1">⚠️ Irreversible</span></span></label>
+          <label class="block"><input type="radio" name="action" value="delete" class="accent-[#B8391F]"> <span class="text-[#B8391F]">Find and Delete <span class="bg-[#F4B942] text-[#B8391F] px-2 py-0.5 rounded ml-1">Irreversible</span></span></label>
         </div>
+      </div>
+      <div id="replace_with_container" class="mt-4 hidden">
+        <input type="text" name="replace_value" placeholder="Replace with..." class="w-full px-3 py-2 border border-[#D2492A] rounded focus:ring-[#D2492A] focus:border-[#D2492A]">
       </div>
       <button type="submit" class="w-full mt-6 py-3 rounded-lg font-bold text-lg bg-[#D2492A] hover:bg-[#B8391F] text-white transition">Run</button>
     </form>
+    <script>
+      // Toggle 'Replace with' field
+      document.querySelectorAll('input[name="action"]').forEach(el => {
+        el.addEventListener('change', function() {
+          document.getElementById('replace_with_container').classList.toggle('hidden', this.value !== 'replace');
+        });
+      });
+      // Toggle course/subaccount ID fields
+      document.querySelectorAll('input[name="scope"]').forEach(el => {
+        el.addEventListener('change', function() {
+          document.getElementById('course_ids').classList.toggle('hidden', this.value !== 'multiple');
+          document.getElementById('subaccount_id').classList.toggle('hidden', this.value !== 'subaccount');
+        });
+      });
+      // Select All/Deselect All for areas
+      const toggleBtn = document.getElementById('toggle-areas');
+      const areaCheckboxes = document.querySelectorAll('input[name="areas"]');
+      let allChecked = true;
+      toggleBtn.addEventListener('click', function() {
+        allChecked = !allChecked;
+        areaCheckboxes.forEach(cb => cb.checked = allChecked);
+        toggleBtn.textContent = allChecked ? 'Deselect All' : 'Select All';
+      });
+    </script>
     {% if results %}
       <div class="mt-8 bg-[#F4ECE6] rounded-lg p-6 border border-[#F4B942]">
         <h4 class="text-xl font-bold text-[#4A1A4A] mb-2">Results</h4>
