@@ -13,28 +13,28 @@
         <h3 class="text-lg font-semibold text-[#6B2C6B] mb-2">What would you like to find?</h3>
         <div class="flex gap-4 mb-2">
           <label class="flex items-center gap-1 cursor-pointer">
-            <input type="checkbox" name="content_type" value="url" class="accent-[#4A1A4A]"> 
+            <input type="checkbox" name="content_type" value="url" class="accent-[#4A1A4A] content-type-toggle"> 
             <span class="text-[#4A1A4A]">
               <svg xmlns="http://www.w3.org/2000/svg" class="inline w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 010 5.656l-3.535 3.535a4 4 0 01-5.657-5.657l1.414-1.414" /></svg>
               URLs
             </span>
           </label>
           <label class="flex items-center gap-1 cursor-pointer">
-            <input type="checkbox" name="content_type" value="text" class="accent-[#4A1A4A]"> 
+            <input type="checkbox" name="content_type" value="text" class="accent-[#4A1A4A] content-type-toggle"> 
             <span class="text-[#4A1A4A]">
               <svg xmlns="http://www.w3.org/2000/svg" class="inline w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8M8 12h8m-8-4h8" /></svg>
               Text Content
             </span>
           </label>
           <label class="flex items-center gap-1 cursor-pointer">
-            <input type="checkbox" name="content_type" value="iframe" class="accent-[#4A1A4A]"> 
+            <input type="checkbox" name="content_type" value="iframe" class="accent-[#4A1A4A] content-type-toggle"> 
             <span class="text-[#4A1A4A]">
               <svg xmlns="http://www.w3.org/2000/svg" class="inline w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="3" y="7" width="18" height="10" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
               Embedded Content
             </span>
           </label>
         </div>
-        <input type="text" name="search_value" placeholder="Enter value to find" required class="w-full px-3 py-2 border border-[#6B2C6B] rounded focus:ring-[#4A1A4A] focus:border-[#4A1A4A]">
+        <div id="find-fields-container"></div>
       </div>
       <!-- Step 2: Scope Definition -->
       <div>
@@ -75,15 +75,116 @@
         </div>
       </div>
       <div id="replace_with_container" class="mt-4 hidden">
-        <input type="text" name="replace_value" placeholder="Replace with..." class="w-full px-3 py-2 border border-[#D2492A] rounded focus:ring-[#D2492A] focus:border-[#D2492A]">
+        <div id="replace-fields-container"></div>
       </div>
       <button type="submit" class="w-full mt-6 py-3 rounded-lg font-bold text-lg bg-[#D2492A] hover:bg-[#B8391F] text-white transition">Run</button>
     </form>
     <script>
+      // --- Dynamic Find/Replace Fields ---
+      const typeLabels = {
+        url: 'URL',
+        text: 'Text Content',
+        iframe: 'Embedded Content'
+      };
+      const findFieldsContainer = document.getElementById('find-fields-container');
+      const replaceFieldsContainer = document.getElementById('replace-fields-container');
+      const maxFields = 3;
+      let findFields = {};
+      let replaceFields = {};
+      function renderFields() {
+        // Find fields
+        findFieldsContainer.innerHTML = '';
+        Object.keys(findFields).forEach(type => {
+          const group = document.createElement('div');
+          group.className = 'mb-2';
+          group.innerHTML = `<div class="font-medium text-[#4A1A4A] mb-1">${typeLabels[type]}</div>`;
+          findFields[type].forEach((val, idx) => {
+            const inputId = `find_${type}_${idx}`;
+            group.innerHTML += `<div class="flex gap-2 mb-1"><input type="text" name="find_${type}[]" id="${inputId}" value="${val}" placeholder="Enter ${typeLabels[type].toLowerCase()} to find" required class="w-full px-3 py-2 border border-[#6B2C6B] rounded focus:ring-[#4A1A4A] focus:border-[#4A1A4A]">` +
+              (findFields[type].length > 1 ? `<button type="button" class="remove-find bg-[#F4B942] text-[#4A1A4A] px-2 rounded" data-type="${type}" data-idx="${idx}">Remove</button>` : '') +
+              `</div>`;
+          });
+          if (findFields[type].length < maxFields) {
+            group.innerHTML += `<button type="button" class="add-find text-xs text-[#4A1A4A] underline" data-type="${type}">+ Add another</button>`;
+          }
+          findFieldsContainer.appendChild(group);
+        });
+        // Replace fields
+        replaceFieldsContainer.innerHTML = '';
+        if (document.querySelector('input[name="action"]:checked').value === 'replace') {
+          Object.keys(replaceFields).forEach(type => {
+            const group = document.createElement('div');
+            group.className = 'mb-2';
+            group.innerHTML = `<div class="font-medium text-[#D2492A] mb-1">${typeLabels[type]} - Replace with</div>`;
+            replaceFields[type].forEach((val, idx) => {
+              const inputId = `replace_${type}_${idx}`;
+              group.innerHTML += `<div class="flex gap-2 mb-1"><input type="text" name="replace_${type}[]" id="${inputId}" value="${val}" placeholder="Replace with..." class="w-full px-3 py-2 border border-[#D2492A] rounded focus:ring-[#D2492A] focus:border-[#D2492A]">` +
+                `</div>`;
+            });
+            replaceFieldsContainer.appendChild(group);
+          });
+        }
+      }
+      function updateFieldsFromSelection() {
+        document.querySelectorAll('input.content-type-toggle').forEach(cb => {
+          const type = cb.value;
+          if (cb.checked) {
+            if (!findFields[type]) {
+              findFields[type] = [''];
+              replaceFields[type] = [''];
+            }
+          } else {
+            delete findFields[type];
+            delete replaceFields[type];
+          }
+        });
+        renderFields();
+      }
+      // Initial setup
+      document.querySelectorAll('input.content-type-toggle').forEach(cb => {
+        cb.addEventListener('change', updateFieldsFromSelection);
+      });
+      // Add/Remove find fields
+      findFieldsContainer.addEventListener('click', function(e) {
+        if (e.target.classList.contains('add-find')) {
+          const type = e.target.getAttribute('data-type');
+          if (findFields[type].length < maxFields) {
+            findFields[type].push('');
+            replaceFields[type].push('');
+            renderFields();
+          }
+        } else if (e.target.classList.contains('remove-find')) {
+          const type = e.target.getAttribute('data-type');
+          const idx = parseInt(e.target.getAttribute('data-idx'));
+          if (findFields[type].length > 1) {
+            findFields[type].splice(idx, 1);
+            replaceFields[type].splice(idx, 1);
+            renderFields();
+          }
+        }
+      });
+      // Sync input values
+      findFieldsContainer.addEventListener('input', function(e) {
+        const match = e.target.name.match(/^find_(\w+)\[\]$/);
+        if (match) {
+          const type = match[1];
+          const idx = Array.from(findFieldsContainer.querySelectorAll(`input[name='find_${type}[]']`)).indexOf(e.target);
+          findFields[type][idx] = e.target.value;
+        }
+      });
+      replaceFieldsContainer.addEventListener('input', function(e) {
+        const match = e.target.name.match(/^replace_(\w+)\[\]$/);
+        if (match) {
+          const type = match[1];
+          const idx = Array.from(replaceFieldsContainer.querySelectorAll(`input[name='replace_${type}[]']`)).indexOf(e.target);
+          replaceFields[type][idx] = e.target.value;
+        }
+      });
       // Toggle 'Replace with' field
       document.querySelectorAll('input[name="action"]').forEach(el => {
         el.addEventListener('change', function() {
           document.getElementById('replace_with_container').classList.toggle('hidden', this.value !== 'replace');
+          renderFields();
         });
       });
       // Toggle course/subaccount ID fields
@@ -102,6 +203,8 @@
         areaCheckboxes.forEach(cb => cb.checked = allChecked);
         toggleBtn.textContent = allChecked ? 'Deselect All' : 'Select All';
       });
+      // Initialize fields on page load
+      updateFieldsFromSelection();
     </script>
     {% if results %}
       <div class="mt-8 bg-[#F4ECE6] rounded-lg p-6 border border-[#F4B942]">
