@@ -31,14 +31,8 @@ def handle_find_replace_request(request):
     canvas_user_id = request.session.get('canvas_user_id')
     canvas_course_id = request.session.get('canvas_course_id')
     canvas_url = request.session.get('canvas_url')
-    api_token = request.session.get('canvas_api_token')  # TODO: Implement LTI token exchange for real use
+    api_token = request.session.get('canvas_api_token')  # LTI SSO only
 
-    # Fallback for testing: allow token in POST (remove in production)
-    if not api_token:
-        api_token = request.POST.get('api_token')
-
-    content_type = request.POST.get('content_type', 'url')
-    search_value = request.POST.get('search_value', '').strip()
     areas = request.POST.getlist('areas')
     scope = request.POST.get('scope', 'current')
     env = request.POST.get('env', 'beta')
@@ -49,15 +43,30 @@ def handle_find_replace_request(request):
         return render(request, 'tools/find_replace.html', {
             'error': 'Only current course scope is supported in this version.'
         })
-    if not (canvas_url and api_token and canvas_course_id and search_value):
+    if not (canvas_url and api_token and canvas_course_id):
         return render(request, 'tools/find_replace.html', {
-            'error': 'Missing required information (Canvas URL, API token, course, or search value).'
+            'error': 'Missing required information (Canvas URL, API token, or course).'
         })
 
-    # Build url_mappings (for now, just replace search_value with itself as a demo)
-    # In production, add a field for replacement value
-    url_mappings = {search_value: request.POST.get('replace_value', search_value)}
-    search_targets = [search_value]
+    # Parse all find/replace fields for each content type
+    content_types = request.POST.getlist('content_type')
+    url_mappings = {}  # {find_value: replace_value}
+    search_targets = []
+    for ctype in content_types:
+        find_vals = request.POST.getlist(f'find_{ctype}[]')
+        replace_vals = request.POST.getlist(f'replace_{ctype}[]') if action == 'replace' else []
+        for idx, find_val in enumerate(find_vals):
+            find_val = find_val.strip()
+            if not find_val:
+                continue
+            search_targets.append(find_val)
+            if action == 'replace':
+                # One-to-one mapping
+                replace_val = replace_vals[idx].strip() if idx < len(replace_vals) else find_val
+                url_mappings[find_val] = replace_val
+            else:
+                url_mappings[find_val] = find_val  # For preview/delete, map to itself
+
     is_beta = (env == 'beta')
     preview_only = (action == 'preview')
 
