@@ -11,6 +11,7 @@
       <!-- Step 1: Content Type Selection -->
       <div>
         <h3 class="text-lg font-semibold text-[#6B2C6B] mb-2">What would you like to find?</h3>
+        <p class="text-xs text-[#6B2C6B] mb-2">Select one or more content types. You can add up to 3 values for each type.</p>
         <div class="flex gap-4 mb-2">
           <label class="flex items-center gap-1 cursor-pointer">
             <input type="checkbox" name="content_type" value="url" class="accent-[#4A1A4A] content-type-toggle"> 
@@ -76,9 +77,28 @@
       </div>
       <div id="replace_with_container" class="mt-4 hidden">
         <div id="replace-fields-container"></div>
+        <p class="text-xs text-[#D2492A]">Each value to find must have a corresponding replacement. Leave blank to remove.</p>
       </div>
-      <button type="submit" class="w-full mt-6 py-3 rounded-lg font-bold text-lg bg-[#D2492A] hover:bg-[#B8391F] text-white transition">Run</button>
+      <button type="submit" id="run-btn" class="w-full mt-6 py-3 rounded-lg font-bold text-lg bg-[#D2492A] hover:bg-[#B8391F] text-white transition">Run</button>
     </form>
+    <!-- Spinner Overlay -->
+    <div id="spinner-overlay" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 hidden" role="status" aria-live="polite">
+      <div class="flex flex-col items-center">
+        <svg class="animate-spin h-10 w-10 text-[#4A1A4A] mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
+        <span class="text-[#4A1A4A] font-medium">Processing your request...</span>
+      </div>
+    </div>
+    <!-- Modal for destructive confirmation -->
+    <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden" role="dialog" aria-modal="true">
+      <div class="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full">
+        <h3 class="text-lg font-bold text-[#B8391F] mb-2">Please confirm this action</h3>
+        <p class="text-[#6B2C6B] mb-4">You are about to delete content across multiple courses or an entire subaccount. This action is <span class="font-bold text-[#B8391F]">irreversible</span>.<br>Are you sure you want to proceed?</p>
+        <div class="flex justify-end gap-2">
+          <button id="cancel-modal" class="px-4 py-2 rounded bg-gray-200 text-[#4A1A4A]">Cancel</button>
+          <button id="confirm-modal-btn" class="px-4 py-2 rounded bg-[#B8391F] text-white font-bold">Yes, Delete</button>
+        </div>
+      </div>
+    </div>
     <script>
       // --- Dynamic Find/Replace Fields ---
       const typeLabels = {
@@ -205,6 +225,59 @@
       });
       // Initialize fields on page load
       updateFieldsFromSelection();
+
+      // Inline validation and helper feedback
+      function showHelperText(msg, color) {
+        let el = document.getElementById('helper-text');
+        if (!el) {
+          el = document.createElement('div');
+          el.id = 'helper-text';
+          el.className = 'text-xs mt-1';
+          findFieldsContainer.parentNode.insertBefore(el, findFieldsContainer.nextSibling);
+        }
+        el.textContent = msg;
+        el.style.color = color;
+      }
+      // Spinner overlay logic
+      const spinnerOverlay = document.getElementById('spinner-overlay');
+      const runBtn = document.getElementById('run-btn');
+      const form = runBtn.closest('form');
+      form.addEventListener('submit', function(e) {
+        // Validation: at least one value entered
+        let valid = false;
+        Object.values(findFields).forEach(arr => {
+          arr.forEach(val => { if (val.trim()) valid = true; });
+        });
+        if (!valid) {
+          e.preventDefault();
+          showHelperText('Please enter at least one value to find.', '#B8391F');
+          return;
+        }
+        // Destructive action confirmation
+        const action = form.querySelector('input[name="action"]:checked').value;
+        const scope = form.querySelector('input[name="scope"]:checked').value;
+        if (action === 'delete' && (scope === 'multiple' || scope === 'subaccount')) {
+          e.preventDefault();
+          document.getElementById('confirm-modal').classList.remove('hidden');
+          return;
+        }
+        if (action === 'delete' && scope === 'current') {
+          if (!confirm('Warning: This will permanently delete content in this course. Are you sure you want to proceed?')) {
+            e.preventDefault();
+            return;
+          }
+        }
+        spinnerOverlay.classList.remove('hidden');
+      });
+      // Modal logic
+      document.getElementById('cancel-modal').onclick = function() {
+        document.getElementById('confirm-modal').classList.add('hidden');
+      };
+      document.getElementById('confirm-modal-btn').onclick = function() {
+        document.getElementById('confirm-modal').classList.add('hidden');
+        spinnerOverlay.classList.remove('hidden');
+        form.submit();
+      };
     </script>
     {% if results %}
       <div class="mt-8 bg-[#F4ECE6] rounded-lg p-6 border border-[#F4B942]">
