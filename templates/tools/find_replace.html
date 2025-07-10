@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="find-replace-tool">
+  <h2>Find & Replace Tool</h2>
+  {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+  {% endif %}
+  <form method="post">
+    {% csrf_token %}
+    <!-- Step 1: Content Type Selection -->
+    <div class="content-type-selector">
+      <h3>What would you like to find?</h3>
+      <div class="content-types">
+        <label><input type="radio" name="content_type" value="url" checked> 🔗 URLs</label>
+        <label><input type="radio" name="content_type" value="text"> 📝 Text Content</label>
+        <label><input type="radio" name="content_type" value="iframe"> 🖼️ Embedded Content</label>
+      </div>
+      <div class="search-inputs">
+        <input type="text" name="search_value" placeholder="Enter value to find" required>
+      </div>
+    </div>
+    <!-- Step 2: Scope Definition -->
+    <div class="scope-selection">
+      <h3>Where should I look? <span class="reassurance">I'll scan carefully for you</span></h3>
+      <div class="content-areas">
+        <label><input type="checkbox" name="areas" value="pages" checked> Pages</label>
+        <label><input type="checkbox" name="areas" value="syllabus" checked> Syllabus</label>
+        <label><input type="checkbox" name="areas" value="assignments"> Assignments</label>
+        <label><input type="checkbox" name="areas" value="discussions"> Discussions</label>
+        <label><input type="checkbox" name="areas" value="quizzes"> Quizzes</label>
+        <label><input type="checkbox" name="areas" value="announcements"> Announcements</label>
+        <label><input type="checkbox" name="areas" value="modules"> Modules</label>
+      </div>
+      <div class="course-scope">
+        <h4>Course Scope</h4>
+        <label><input type="radio" name="scope" value="current" checked> Current course only</label>
+        <label><input type="radio" name="scope" value="multiple"> Select specific courses</label>
+        <label><input type="radio" name="scope" value="subaccount"> Entire subaccount</label>
+      </div>
+    </div>
+    <!-- Step 3: Environment & Action Selection -->
+    <div class="environment-action">
+      <div class="environment-choice">
+        <h3>Testing Environment</h3>
+        <label><input type="radio" name="env" value="beta" checked> Beta Instance <span class="recommended">Recommended</span></label>
+        <label><input type="radio" name="env" value="production"> Production <span class="warning">Live Changes</span></label>
+      </div>
+      <div class="action-choice">
+        <h3>What would you like to do?</h3>
+        <label><input type="radio" name="action" value="preview" checked> Preview Only <span class="safe">Safe</span></label>
+        <label><input type="radio" name="action" value="replace"> Find and Replace</label>
+        <label><input type="radio" name="action" value="delete"> Find and Delete <span class="destructive">⚠️ Irreversible</span></label>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Run</button>
+  </form>
+  <!-- Placeholder for results -->
+  {% if results %}
+    <div class="results mt-4">
+      <h4>Results</h4>
+      <pre>{{ results|safe }}</pre>
+    </div>
+  {% endif %}
+</div>
+{% endblock %} 

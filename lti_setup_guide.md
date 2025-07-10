@@ -219,3 +219,35 @@ LOGGING = {
 - Use debug logs to trace LTI launch errors
 - If tool doesn't appear in Canvas, check placement config and clear cache
 - For connection errors, verify Railway app is awake and using HTTPS
+
+---
+
+## Troubleshooting & Error Prevention
+
+### Common LTI/Canvas Errors and Solutions
+
+- **Invalid redirect_uri**
+  - **Cause:** The redirect URI sent by your tool does not match the Canvas Developer Key exactly (including trailing slash and protocol).
+  - **Fix:** Double-check the Redirect URI in both Canvas and Django. They must match exactly.
+
+- **Issuer not found**
+  - **Cause:** The `iss` (issuer) from Canvas is not present in your Django LTI config.
+  - **Fix:** Add every Canvas instance you use (beta, prod, test) to your LTI config.
+
+- **Session not persisting / 400 Bad Request**
+  - **Cause:** Cookies not set up for cross-site/iframe use, or missing session variables.
+  - **Fix:** Set `SESSION_COOKIE_SAMESITE = 'None'` and `SESSION_COOKIE_SECURE = True` in Django settings. Ensure session variables are set after LTI launch.
+
+- **Key file issues**
+  - **Cause:** Private/public keys are missing, in the wrong format, or not decoded from base64.
+  - **Fix:** Ensure keys are in PEM format and in the correct location. Decode from base64 if needed.
+
+- **CSRF errors**
+  - **Cause:** Canvas or your app domain not in `CSRF_TRUSTED_ORIGINS`.
+  - **Fix:** Add all relevant domains to `CSRF_TRUSTED_ORIGINS` in Django settings.
+
+- **General Debugging Tips**
+  - Check Django logs for error messages.
+  - Use browser dev tools to inspect network requests and parameters (especially `redirect_uri` and `iss`).
+  - Test in Canvas Beta before production.
+  - After any config change, clear browser cache and cookies, and re-authenticate in Canvas.
