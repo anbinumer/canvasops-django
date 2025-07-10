@@ -1,65 +1,73 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="find-replace-tool">
-  <h2>Find & Replace Tool</h2>
-  {% if error %}
-    <div class="alert alert-danger">{{ error }}</div>
-  {% endif %}
-  <form method="post">
-    {% csrf_token %}
-    <!-- Step 1: Content Type Selection -->
-    <div class="content-type-selector">
-      <h3>What would you like to find?</h3>
-      <div class="content-types">
-        <label><input type="radio" name="content_type" value="url" checked> 🔗 URLs</label>
-        <label><input type="radio" name="content_type" value="text"> 📝 Text Content</label>
-        <label><input type="radio" name="content_type" value="iframe"> 🖼️ Embedded Content</label>
+<div class="flex justify-center items-center min-h-screen bg-gradient-to-br from-[#F9F4F1] to-[#F4ECE6] py-8">
+  <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-2xl border-2 border-[#4A1A4A]">
+    <h2 class="text-3xl font-extrabold text-[#4A1A4A] mb-2">Find & Replace Tool</h2>
+    {% if error %}
+      <div class="bg-[#D2492A] text-white rounded px-4 py-2 mb-4">{{ error }}</div>
+    {% endif %}
+    <form method="post" class="space-y-6">
+      {% csrf_token %}
+      <!-- Step 1: Content Type Selection -->
+      <div>
+        <h3 class="text-lg font-semibold text-[#6B2C6B] mb-2">What would you like to find?</h3>
+        <div class="flex gap-4 mb-2">
+          <label class="flex items-center gap-1 cursor-pointer">
+            <input type="radio" name="content_type" value="url" checked class="accent-[#4A1A4A]"> <span class="text-[#4A1A4A]">🔗 URLs</span>
+          </label>
+          <label class="flex items-center gap-1 cursor-pointer">
+            <input type="radio" name="content_type" value="text" class="accent-[#4A1A4A]"> <span class="text-[#4A1A4A]">📝 Text Content</span>
+          </label>
+          <label class="flex items-center gap-1 cursor-pointer">
+            <input type="radio" name="content_type" value="iframe" class="accent-[#4A1A4A]"> <span class="text-[#4A1A4A]">🖼️ Embedded Content</span>
+          </label>
+        </div>
+        <input type="text" name="search_value" placeholder="Enter value to find" required class="w-full px-3 py-2 border border-[#6B2C6B] rounded focus:ring-[#4A1A4A] focus:border-[#4A1A4A]">
       </div>
-      <div class="search-inputs">
-        <input type="text" name="search_value" placeholder="Enter value to find" required>
+      <!-- Step 2: Scope Definition -->
+      <div>
+        <h3 class="text-lg font-semibold text-[#6B2C6B] mb-2">Where should I look? <span class="text-[#F4B942] font-normal">I'll scan carefully for you</span></h3>
+        <div class="flex flex-wrap gap-3 mb-2">
+          <label><input type="checkbox" name="areas" value="pages" checked class="accent-[#4A1A4A]"> Pages</label>
+          <label><input type="checkbox" name="areas" value="syllabus" checked class="accent-[#4A1A4A]"> Syllabus</label>
+          <label><input type="checkbox" name="areas" value="assignments" class="accent-[#4A1A4A]"> Assignments</label>
+          <label><input type="checkbox" name="areas" value="discussions" class="accent-[#4A1A4A]"> Discussions</label>
+          <label><input type="checkbox" name="areas" value="quizzes" class="accent-[#4A1A4A]"> Quizzes</label>
+          <label><input type="checkbox" name="areas" value="announcements" class="accent-[#4A1A4A]"> Announcements</label>
+          <label><input type="checkbox" name="areas" value="modules" class="accent-[#4A1A4A]"> Modules</label>
+        </div>
+        <div class="mt-2">
+          <h4 class="font-semibold text-[#6B2C6B]">Course Scope</h4>
+          <div class="flex gap-4 mt-1">
+            <label><input type="radio" name="scope" value="current" checked class="accent-[#4A1A4A]"> Current course only</label>
+            <label><input type="radio" name="scope" value="multiple" class="accent-[#4A1A4A]"> Select specific courses</label>
+            <label><input type="radio" name="scope" value="subaccount" class="accent-[#4A1A4A]"> Entire subaccount</label>
+          </div>
+        </div>
       </div>
-    </div>
-    <!-- Step 2: Scope Definition -->
-    <div class="scope-selection">
-      <h3>Where should I look? <span class="reassurance">I'll scan carefully for you</span></h3>
-      <div class="content-areas">
-        <label><input type="checkbox" name="areas" value="pages" checked> Pages</label>
-        <label><input type="checkbox" name="areas" value="syllabus" checked> Syllabus</label>
-        <label><input type="checkbox" name="areas" value="assignments"> Assignments</label>
-        <label><input type="checkbox" name="areas" value="discussions"> Discussions</label>
-        <label><input type="checkbox" name="areas" value="quizzes"> Quizzes</label>
-        <label><input type="checkbox" name="areas" value="announcements"> Announcements</label>
-        <label><input type="checkbox" name="areas" value="modules"> Modules</label>
+      <!-- Step 3: Environment & Action Selection -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <h3 class="text-lg font-semibold text-[#6B2C6B] mb-2">Testing Environment</h3>
+          <label class="block mb-1"><input type="radio" name="env" value="beta" checked class="accent-[#4A1A4A]"> <span class="text-[#4A1A4A]">Beta Instance <span class="bg-[#F4B942] text-[#4A1A4A] px-2 py-0.5 rounded ml-1">Recommended</span></span></label>
+          <label class="block"><input type="radio" name="env" value="production" class="accent-[#D2492A]"> <span class="text-[#D2492A]">Production <span class="bg-[#F4B942] text-[#B8391F] px-2 py-0.5 rounded ml-1">Live Changes</span></span></label>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-[#6B2C6B] mb-2">What would you like to do?</h3>
+          <label class="block mb-1"><input type="radio" name="action" value="preview" checked class="accent-[#4A1A4A]"> <span class="text-[#4A1A4A]">Preview Only <span class="bg-[#F4B942] text-[#4A1A4A] px-2 py-0.5 rounded ml-1">Safe</span></span></label>
+          <label class="block mb-1"><input type="radio" name="action" value="replace" class="accent-[#D2492A]"> <span class="text-[#D2492A]">Find and Replace</span></label>
+          <label class="block"><input type="radio" name="action" value="delete" class="accent-[#B8391F]"> <span class="text-[#B8391F]">Find and Delete <span class="bg-[#F4B942] text-[#B8391F] px-2 py-0.5 rounded ml-1">⚠️ Irreversible</span></span></label>
+        </div>
       </div>
-      <div class="course-scope">
-        <h4>Course Scope</h4>
-        <label><input type="radio" name="scope" value="current" checked> Current course only</label>
-        <label><input type="radio" name="scope" value="multiple"> Select specific courses</label>
-        <label><input type="radio" name="scope" value="subaccount"> Entire subaccount</label>
+      <button type="submit" class="w-full mt-6 py-3 rounded-lg font-bold text-lg bg-[#D2492A] hover:bg-[#B8391F] text-white transition">Run</button>
+    </form>
+    {% if results %}
+      <div class="mt-8 bg-[#F4ECE6] rounded-lg p-6 border border-[#F4B942]">
+        <h4 class="text-xl font-bold text-[#4A1A4A] mb-2">Results</h4>
+        <div class="text-[#6B2C6B]">{{ results.summary }}</div>
+        <pre class="mt-2 text-xs text-[#4A1A4A] bg-[#F9F4F1] rounded p-2 overflow-x-auto">{{ results.findings|safe }}</pre>
       </div>
-    </div>
-    <!-- Step 3: Environment & Action Selection -->
-    <div class="environment-action">
-      <div class="environment-choice">
-        <h3>Testing Environment</h3>
-        <label><input type="radio" name="env" value="beta" checked> Beta Instance <span class="recommended">Recommended</span></label>
-        <label><input type="radio" name="env" value="production"> Production <span class="warning">Live Changes</span></label>
-      </div>
-      <div class="action-choice">
-        <h3>What would you like to do?</h3>
-        <label><input type="radio" name="action" value="preview" checked> Preview Only <span class="safe">Safe</span></label>
-        <label><input type="radio" name="action" value="replace"> Find and Replace</label>
-        <label><input type="radio" name="action" value="delete"> Find and Delete <span class="destructive">⚠️ Irreversible</span></label>
-      </div>
-    </div>
-    <button type="submit" class="btn btn-primary mt-3">Run</button>
-  </form>
-  <!-- Placeholder for results -->
-  {% if results %}
-    <div class="results mt-4">
-      <h4>Results</h4>
-      <pre>{{ results|safe }}</pre>
-    </div>
-  {% endif %}
+    {% endif %}
+  </div>
 </div>
 {% endblock %} 
