@@ -26,4 +26,4 @@ def session_debug(request):
     request.session['debug_test'] = True
     request.session.save()
     
-    return JsonResponse(debug_data, indent=2) 
+    return JsonResponse(debug_data) 
