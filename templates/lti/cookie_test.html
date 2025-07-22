@@ -3,192 +3,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LTI Cookie Test</title>
+    <title>CanvasOps - Browser Compatibility</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #f5f5f5;
+        .bounce {
+            animation: bounce 2s infinite;
         }
-        .test-container {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
         }
-        .status {
-            padding: 15px;
-            border-radius: 5px;
-            margin: 15px 0;
-            font-weight: bold;
-        }
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .warning {
-            background-color: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 10px 5px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .debug-info {
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 5px;
-            font-family: monospace;
-            font-size: 12px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
-<body>
-    <div class="test-container">
-        <h1>🔧 LTI Cookie Compatibility Test</h1>
-        <p>This test checks if your browser can store cookies when this app is embedded in an iframe (like Canvas).</p>
-        
-        <div id="status" class="status warning">
-            Testing cookie compatibility...
-        </div>
-        
-        <button onclick="testCookies()">Test Cookies Now</button>
-        <button onclick="proceedToLTI()">Skip Test & Continue</button>
-        
-        <div class="debug-info">
-            <strong>Debug Information:</strong><br>
-            User Agent: {{ request.META.HTTP_USER_AGENT|default:"Unknown" }}<br>
-            In iframe: <span id="iframe-status">Checking...</span><br>
-            Current cookies: <span id="cookie-count">Checking...</span><br>
-            Session ID: {{ request.session.session_key|default:"None" }}<br>
-            Timestamp: {{ now|date:"Y-m-d H:i:s" }}
-        </div>
-        
-        <div id="instructions" style="display: none;">
-            <h3>⚠️ Cookie Issues Detected</h3>
-            <p>Your browser is blocking cookies needed for LTI to work properly. This usually happens in Safari or when third-party cookies are disabled.</p>
-            
-            <h4>Solutions:</h4>
-            <ul>
-                <li><strong>Safari users:</strong> Go to Safari → Preferences → Privacy → Uncheck "Prevent cross-site tracking"</li>
-                <li><strong>Chrome users:</strong> Go to Settings → Privacy and security → Cookies → Allow all cookies</li>
-                <li><strong>Alternative:</strong> <a href="#" onclick="openInNewTab()">Open this tool in a new tab</a></li>
-            </ul>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 bounce">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">CanvasOps Setup</h1>
+                <p class="text-gray-600">Checking browser compatibility for Canvas integration...</p>
+            </div>
+
+            <!-- Main Test Card -->
+            <div class="bg-white rounded-xl shadow-lg p-8 mb-6">
+                <!-- Loading State -->
+                <div id="loading-state" class="text-center">
+                    <div class="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+                    <p class="text-gray-600">Running compatibility tests...</p>
+                </div>
+
+                <!-- Success State -->
+                <div id="success-state" class="hidden text-center fade-in">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-bold text-green-800 mb-2">✅ Browser Compatible!</h2>
+                    <p class="text-green-700 mb-4">Your browser supports CanvasOps. Launching tool...</p>
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <p class="text-sm text-green-800">Redirecting to CanvasOps in 3 seconds...</p>
+                    </div>
+                </div>
+
+                <!-- Failure State -->
+                <div id="failure-state" class="hidden fade-in">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-bold text-red-800 mb-2">⚠️ Compatibility Issue</h2>
+                    <p class="text-red-700 mb-6">Your browser is blocking features needed for CanvasOps to work in Canvas.</p>
+                    
+                    <!-- Browser-specific solutions -->
+                    <div class="space-y-4 mb-6">
+                        <div id="safari-fix" class="hidden bg-orange-50 border border-orange-200 rounded-lg p-4">
+                            <h3 class="font-bold text-orange-800 mb-2">🧭 Safari Users:</h3>
+                            <ol class="list-decimal list-inside text-sm text-orange-700 space-y-1">
+                                <li>Go to Safari → Settings → Privacy</li>
+                                <li>Uncheck "Prevent cross-site tracking"</li>
+                                <li>Refresh this page</li>
+                            </ol>
+                        </div>
+                        
+                        <div id="chrome-fix" class="hidden bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <h3 class="font-bold text-blue-800 mb-2">🔵 Chrome Users:</h3>
+                            <ol class="list-decimal list-inside text-sm text-blue-700 space-y-1">
+                                <li>Go to Settings → Privacy and security → Cookies</li>
+                                <li>Select "Allow all cookies" (temporarily)</li>
+                                <li>Refresh this page</li>
+                            </ol>
+                        </div>
+                        
+                        <div id="firefox-fix" class="hidden bg-purple-50 border border-purple-200 rounded-lg p-4">
+                            <h3 class="font-bold text-purple-800 mb-2">🦊 Firefox Users:</h3>
+                            <ol class="list-decimal list-inside text-sm text-purple-700 space-y-1">
+                                <li>Go to Settings → Privacy & Security</li>
+                                <li>Under "Enhanced Tracking Protection", select "Standard"</li>
+                                <li>Refresh this page</li>
+                            </ol>
+                        </div>
+                    </div>
+                    
+                    <!-- Action buttons -->
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button onclick="retryTest()" 
+                                class="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">
+                            🔄 Retry Test
+                        </button>
+                        <button onclick="openNewTab()" 
+                                class="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors">
+                            🚀 Open in New Tab
+                        </button>
+                        <button onclick="skipTest()" 
+                                class="flex-1 bg-gray-600 text-white py-3 px-6 rounded-lg hover:bg-gray-700 transition-colors">
+                            ⏭️ Skip Test
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Debug Info -->
+            <div class="bg-gray-50 rounded-lg p-4 text-xs text-gray-600">
+                <details>
+                    <summary class="cursor-pointer font-medium">Debug Information</summary>
+                    <div class="mt-2 space-y-1">
+                        <div>Browser: <span id="browser-info">{{ user_agent|default:"Unknown" }}</span></div>
+                        <div>In iframe: <span id="iframe-status">Checking...</span></div>
+                        <div>Cookies: <span id="cookie-status">Testing...</span></div>
+                        <div>Local Storage: <span id="storage-status">Testing...</span></div>
+                        <div>Timestamp: <span>{{ now|date:"Y-m-d H:i:s" }}</span></div>
+                    </div>
+                </details>
+            </div>
         </div>
     </div>
 
     <script>
-        // Check if we're in an iframe
-        const inIframe = window !== window.top;
-        document.getElementById('iframe-status').textContent = inIframe ? 'Yes' : 'No';
-        
-        // Count existing cookies
-        const cookieCount = document.cookie.split(';').filter(c => c.trim().length > 0).length;
-        document.getElementById('cookie-count').textContent = cookieCount;
-        
-        function testCookies() {
-            const status = document.getElementById('status');
-            status.textContent = 'Testing...';
-            status.className = 'status warning';
-            
-            // First, try to set a test cookie via JavaScript
-            document.cookie = 'js_test_cookie=test_value; Secure; SameSite=None; path=/';
-            
-            // Wait a moment, then check if it was set
-            setTimeout(() => {
-                const jsTestWorked = document.cookie.includes('js_test_cookie=test_value');
-                
-                if (jsTestWorked) {
-                    // JavaScript cookies work, now test server-side cookies
-                    fetch('/lti/cookie-test/', {
-                        method: 'POST',
-                        credentials: 'include',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': getCookie('csrftoken') || ''
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'cookie_set') {
-                            // Check if server cookie was set
-                            setTimeout(() => {
-                                if (document.cookie.includes('lti_test_cookie=test_value')) {
-                                    status.textContent = '✅ Cookie test passed! LTI should work properly.';
-                                    status.className = 'status success';
-                                    setTimeout(() => proceedToLTI(), 2000);
-                                } else {
-                                    showCookieError();
-                                }
-                            }, 100);
-                        } else {
-                            showCookieError();
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Cookie test error:', error);
-                        showCookieError();
-                    });
-                } else {
-                    showCookieError();
-                }
-            }, 100);
-        }
-        
-        function showCookieError() {
-            const status = document.getElementById('status');
-            status.textContent = '❌ Cookie test failed. Cookies are being blocked.';
-            status.className = 'status error';
-            document.getElementById('instructions').style.display = 'block';
-        }
-        
-        function proceedToLTI() {
-            // Redirect to LTI login with skip flag
-            window.location.href = '/lti/login/?skip_test=1';
-        }
-        
-        function openInNewTab() {
-            window.open(window.location.href.replace('/cookie-test/', '/login/'), '_blank');
-        }
-        
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
+        // Global test state
+        let testResults = {
+            cookies: false,
+            localStorage: false,
+            sessionStorage: false,
+            inIframe: false
+        };
+
+        // Detect browser
+        function detectBrowser() {
+            const ua = navigator.userAgent;
+            if (ua.includes('Safari') && !ua.includes('Chrome')) {
+                return 'safari';
+            } else if (ua.includes('Chrome')) {
+                return 'chrome';
+            } else if (ua.includes('Firefox')) {
+                return 'firefox';
             }
-            return cookieValue;
+            return 'other';
         }
-        
-        // Auto-start test after page load
+
+        // Check if in iframe
+        function checkIframe() {
+            const inIframe = window.self !== window.top;
+            document.getElementById('iframe-status').textContent = inIframe ? 'Yes' : 'No';
+            testResults.inIframe = inIframe;
+            return inIframe;
+        }
+
+        // Test cookie support
+        function testCookies() {
+            try {
+                // Test multiple cookie configurations
+                const testName = 'lti_cookie_test';
+                const testValue = 'test_' + Date.now();
+                
+                // Try SameSite=None first
+                document.cookie = `${testName}=${testValue}; SameSite=None; Secure; Path=/`;
+                
+                // Check if it worked
+                const worked = document.cookie.includes(`${testName}=${testValue}`);
+                
+                // Cleanup
+                document.cookie = `${testName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/`;
+                
+                testResults.cookies = worked;
+                document.getElementById('cookie-status').textContent = worked ? 'Working' : 'Blocked';
+                return worked;
+            } catch (e) {
+                console.error('Cookie test failed:', e);
+                testResults.cookies = false;
+                document.getElementById('cookie-status').textContent = 'Failed';
+                return false;
+            }
+        }
+
+        // Test local storage
+        function testLocalStorage() {
+            try {
+                const testKey = 'lti_storage_test';
+                const testValue = 'test_' + Date.now();
+                
+                localStorage.setItem(testKey, testValue);
+                const worked = localStorage.getItem(testKey) === testValue;
+                localStorage.removeItem(testKey);
+                
+                testResults.localStorage = worked;
+                document.getElementById('storage-status').textContent = worked ? 'Working' : 'Blocked';
+                return worked;
+            } catch (e) {
+                console.error('LocalStorage test failed:', e);
+                testResults.localStorage = false;
+                document.getElementById('storage-status').textContent = 'Failed';
+                return false;
+            }
+        }
+
+        // Run all tests
+        function runCompatibilityTests() {
+            setTimeout(() => {
+                checkIframe();
+                const cookiesWork = testCookies();
+                const storageWorks = testLocalStorage();
+                
+                // Show browser-specific help
+                const browser = detectBrowser();
+                if (!cookiesWork) {
+                    document.getElementById(`${browser}-fix`).classList.remove('hidden');
+                }
+                
+                // Determine overall result
+                if (cookiesWork || storageWorks) {
+                    showSuccess();
+                } else {
+                    showFailure();
+                }
+            }, 2000);
+        }
+
+        function showSuccess() {
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('success-state').classList.remove('hidden');
+            
+            // Redirect after 3 seconds
+            setTimeout(() => {
+                window.location.href = '/lti/login/?cookie_test_passed=true';
+            }, 3000);
+        }
+
+        function showFailure() {
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('failure-state').classList.remove('hidden');
+        }
+
+        function retryTest() {
+            // Reset UI
+            document.getElementById('failure-state').classList.add('hidden');
+            document.getElementById('loading-state').classList.remove('hidden');
+            
+            // Run tests again
+            setTimeout(runCompatibilityTests, 1000);
+        }
+
+        function openNewTab() {
+            const newTabUrl = window.location.origin + '/lti/login/?skip_cookie_test=true&new_tab=true';
+            window.open(newTabUrl, '_blank');
+        }
+
+        function skipTest() {
+            window.location.href = '/lti/login/?skip_cookie_test=true';
+        }
+
+        // Start tests when page loads
         window.addEventListener('load', () => {
-            setTimeout(testCookies, 1000);
+            setTimeout(runCompatibilityTests, 1500);
         });
+
+        // Update browser info
+        document.getElementById('browser-info').textContent = navigator.userAgent;
     </script>
 </body>
 </html> 

@@ -28,16 +28,22 @@ INSTALLED_APPS = [
     'tasks',
 ]
 
+# CRITICAL: Proper middleware ordering for LTI
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    # LTI middleware MUST come early but after security
     'lti.middleware.LTIEmbeddingMiddleware',
+    # Session middleware MUST come after LTI embedding middleware
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    # LTI session middleware MUST come after Django session middleware
     'lti.middleware.LTISessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    # LTI security middleware should come last
+    'lti.middleware.LTISecurityMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
@@ -80,131 +86,154 @@ else:
         }
     }
 
-# Redis for Celery
+# Redis configuration
 REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379')
-
-# Celery Configuration
-CELERY_BROKER_URL = REDIS_URL
-CELERY_RESULT_BACKEND = REDIS_URL
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-
-# Password validation
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
-
-# Internationalization
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'America/Chicago'  # ACU timezone
-USE_I18N = True
-USE_TZ = True
-
-# Static files (CSS, JavaScript, Images)
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-# Media files
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
-# Default primary key field type
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# LTI Configuration
-LTI_CONFIG = {
-    'https://aculeo.test.instructure.com': {
-        'client_id': os.getenv('CANVAS_CLIENT_ID'),
-        'deployment_id': os.getenv('CANVAS_DEPLOYMENT_ID'),
-        'auth_login_url': 'https://aculeo.test.instructure.com/api/lti/authorize_redirect',
-        'auth_token_url': 'https://aculeo.test.instructure.com/login/oauth2/token',
-        'key_set_url': 'https://aculeo.test.instructure.com/api/lti/security/jwks',
-        'private_key_file': 'private.key',
-    },
-}
-
-# LTI 1.3 Configuration
-LTI_TOOL_CONFIG = os.path.join(BASE_DIR, 'lti_config.json')
 
 # Cache configuration for LTI data storage
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
         'LOCATION': REDIS_URL,
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        },
+        'KEY_PREFIX': 'canvasops',
+        'TIMEOUT': 300,  # 5 minutes default
     }
 }
 
-# LTI/iframe cookie compatibility
-SESSION_COOKIE_SAMESITE = 'None'
-SESSION_COOKIE_SECURE = True  # Required for SameSite=None
-SESSION_COOKIE_HTTPONLY = True
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+# CRITICAL: Session configuration for LTI iframe compatibility
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Use DB for reliability
+SESSION_COOKIE_NAME = 'canvasops_sessionid'  # Unique name to avoid conflicts
+SESSION_COOKIE_SECURE = True  # HTTPS required
+SESSION_COOKIE_HTTPONLY = True  # Security
+SESSION_COOKIE_SAMESITE = 'None'  # CRITICAL for iframe embedding
+SESSION_COOKIE_AGE = 7200  # 2 hours (longer than default for LTI sessions)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Keep sessions persistent
+SESSION_SAVE_EVERY_REQUEST = True  # Ensure session persistence
+SESSION_COOKIE_DOMAIN = None  # Let Django handle this
 
-# Allow iframe embedding
-X_FRAME_OPTIONS = 'ALLOWALL'
-
-# CSRF settings for LTI
-CSRF_COOKIE_SAMESITE = 'None'
+# CSRF protection with LTI considerations
 CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_HTTPONLY = False  # Needed for AJAX requests
+CSRF_USE_SESSIONS = True  # Store CSRF tokens in session for iframe compatibility
 
-# Add Canvas domains to trusted origins
+# Canvas domains to trust
 CSRF_TRUSTED_ORIGINS = [
-    'https://canvasops-django-production.up.railway.app',  # Your deployed domain
+    'https://canvasops-django-production.up.railway.app',
     'https://canvas.instructure.com',
     'https://*.instructure.com',
     'https://aculeo.test.instructure.com',
     'https://*.beta.instructure.com',
+    'https://canvas.beta.instructure.com',
 ]
 
-# Session configuration
-SESSION_COOKIE_AGE = 3600  # 1 hour
-SESSION_SAVE_EVERY_REQUEST = True
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-
-# Middleware (add LTI middleware if implemented)
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # LTI-specific middleware (uncomment if implemented)
-    'lti.middleware.LTIEmbeddingMiddleware',
-    'lti.middleware.LTISessionMiddleware',
-]
-
-# Security settings for production
+# Security headers for iframe embedding
+X_FRAME_OPTIONS = 'ALLOWALL'  # Allow Canvas iframe embedding
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
 
+# Production security settings
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    USE_X_FORWARDED_HOST = True
+    USE_X_FORWARDED_PORT = True
+    SECURE_HSTS_SECONDS = 0  # Disabled for LTI compatibility
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+    SECURE_HSTS_PRELOAD = False
 
-# Security Settings
-SECURE_SSL_REDIRECT = not DEBUG
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-X_FRAME_OPTIONS = 'ALLOWALL'  # Allow embedding in Canvas
+# Logging configuration for debugging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': 'lti_debug.log',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'lti': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
+        },
+        'pylti1p3': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'DEBUG' if DEBUG else 'WARNING',
+            'propagate': False,
+        },
+    },
+}
 
-# Environment variables
+# Static files configuration
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+
+# LTI specific settings
+LTI_CONFIG = {
+    'https://aculeo.test.instructure.com': {
+        'default': True,
+        'client_id': os.getenv('CANVAS_CLIENT_ID'),
+        'auth_login_url': 'https://aculeo.test.instructure.com/api/lti/authorize_redirect',
+        'auth_token_url': 'https://aculeo.test.instructure.com/login/oauth2/token',
+        'auth_audience': None,
+        'key_set_url': 'https://aculeo.test.instructure.com/api/lti/security/jwks',
+        'key_set': None,
+        'private_key_file': 'private.key',
+        'public_key_file': 'public.key',
+        'deployment_ids': [os.getenv('CANVAS_DEPLOYMENT_ID')]
+    },
+}
+
+# LTI 1.3 Configuration file
+LTI_TOOL_CONFIG = os.path.join(BASE_DIR, 'lti_config.json')
+
+# Environment variables validation
 ENCRYPTION_KEY = os.getenv('ENCRYPTION_KEY')
+if not ENCRYPTION_KEY and not DEBUG:
+    raise ValueError("ENCRYPTION_KEY environment variable is required in production")
+
+# Canvas API configuration
+CANVAS_CLIENT_ID = os.getenv('CANVAS_CLIENT_ID')
+CANVAS_DEPLOYMENT_ID = os.getenv('CANVAS_DEPLOYMENT_ID')
+CANVAS_INSTANCE_URL = os.getenv('CANVAS_INSTANCE_URL', 'https://aculeo.test.instructure.com')
+
+if not CANVAS_CLIENT_ID:
+    print("WARNING: CANVAS_CLIENT_ID not set")
+if not CANVAS_DEPLOYMENT_ID:
+    print("WARNING: CANVAS_DEPLOYMENT_ID not set")
+
+# Default primary key field type
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Internationalization
+LANGUAGE_CODE = 'en-us'
+TIME_ZONE = 'UTC'
+USE_I18N = True
+USE_TZ = True

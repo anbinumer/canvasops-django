@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CanvasOps LTI Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .login-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .debug-info {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="hidden"] {
+            display: none;
+        }
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>🚀 CanvasOps LTI Login</h1>
+        
+        <div id="session-status" class="status warning">
+            Checking session compatibility...
+        </div>
+        
+        <!-- Session Debug Information -->
+        <div class="debug-info">
+            <strong>Session Information:</strong><br>
+            Session Key: {{ session_key|default:"None" }}<br>
+            User Agent: {{ debug_info.user_agent|default:"Unknown" }}<br>
+            Session Exists: {{ debug_info.session_exists|yesno:"Yes,No" }}<br>
+            Cookie Test Set: {{ debug_info.cookie_test_set|yesno:"Yes,No" }}<br>
+            Timestamp: {% now "Y-m-d H:i:s" %}
+        </div>
+        
+        <!-- Cookie Test Section -->
+        <div id="cookie-test-section">
+            <h3>Testing Browser Compatibility</h3>
+            <div id="test-results">
+                <p>🔄 Testing session persistence...</p>
+            </div>
+            <button onclick="runCookieTest()" id="test-btn">Run Cookie Test</button>
+        </div>
+        
+        <!-- LTI Launch Form -->
+        <div id="launch-section" style="display: none;">
+            <h3>Ready to Launch</h3>
+            <p>✅ Session compatibility confirmed. You can now proceed with the LTI launch.</p>
+            
+            <form method="post" id="lti-form">
+                {% csrf_token %}
+                <input type="hidden" name="target_link_uri" value="{{ request.build_absolute_uri }}/lti/launch/" />
+                <input type="hidden" name="skip_cookie_test" value="1" />
+                
+                <button type="submit" id="launch-btn">
+                    <span class="spinner" id="launch-spinner"></span>
+                    Launch CanvasOps
+                </button>
+            </form>
+        </div>
+        
+        <!-- Fallback Options -->
+        <div id="fallback-section" style="display: none;">
+            <h3>⚠️ Browser Compatibility Issues</h3>
+            <p>Your browser appears to be blocking cookies needed for LTI integration.</p>
+            
+            <h4>Quick Fixes:</h4>
+            <ul>
+                <li><strong>Safari:</strong> Disable "Prevent cross-site tracking" in Privacy settings</li>
+                <li><strong>Chrome:</strong> Allow cookies for this site in Settings → Privacy</li>
+                <li><strong>Firefox:</strong> Disable Enhanced Tracking Protection for this site</li>
+            </ul>
+            
+            <div class="form-group">
+                <button onclick="retryTest()">🔄 Retry Test</button>
+                <button onclick="openNewTab()">🔗 Open in New Tab</button>
+                <button onclick="proceedAnyway()">⚠️ Proceed Anyway</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let testsPassed = 0;
+        let totalTests = 3;
+        
+        // Check if we're in an iframe
+        const inIframe = window !== window.top;
+        
+        function updateStatus(message, type = 'warning') {
+            const statusEl = document.getElementById('session-status');
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+        }
+        
+        function runCookieTest() {
+            updateStatus('Running compatibility tests...', 'warning');
+            testsPassed = 0;
+            
+            // Test 1: JavaScript Cookie Test
+            document.cookie = 'js_test=1; Secure; SameSite=None; path=/';
+            setTimeout(() => {
+                if (document.cookie.includes('js_test=1')) {
+                    testsPassed++;
+                    console.log('✅ JavaScript cookies work');
+                } else {
+                    console.log('❌ JavaScript cookies blocked');
+                }
+                
+                // Test 2: Server-side Cookie Test
+                fetch(window.location.href, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken') || ''
+                    },
+                    body: JSON.stringify({test: 'cookie'})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'cookie_set') {
+                        testsPassed++;
+                        console.log('✅ Server cookies work');
+                    }
+                    
+                    // Test 3: Session Persistence
+                    if (data.session_key) {
+                        testsPassed++;
+                        console.log('✅ Session persistence works');
+                    }
+                    
+                    // Evaluate results
+                    evaluateResults();
+                })
+                .catch(error => {
+                    console.error('Cookie test failed:', error);
+                    evaluateResults();
+                });
+            }, 100);
+        }
+        
+        function evaluateResults() {
+            console.log(`Tests passed: ${testsPassed}/${totalTests}`);
+            
+            if (testsPassed >= 2) {
+                updateStatus('✅ Browser compatibility confirmed!', 'success');
+                document.getElementById('cookie-test-section').style.display = 'none';
+                document.getElementById('launch-section').style.display = 'block';
+            } else {
+                updateStatus('❌ Browser compatibility issues detected', 'error');
+                document.getElementById('cookie-test-section').style.display = 'none';
+                document.getElementById('fallback-section').style.display = 'block';
+            }
+        }
+        
+        function retryTest() {
+            document.getElementById('fallback-section').style.display = 'none';
+            document.getElementById('cookie-test-section').style.display = 'block';
+            updateStatus('Ready to retry tests...', 'warning');
+        }
+        
+        function openNewTab() {
+            const newTabUrl = window.location.href + '?new_tab=1';
+            window.open(newTabUrl, '_blank');
+        }
+        
+        function proceedAnyway() {
+            updateStatus('⚠️ Proceeding without cookie verification...', 'warning');
+            document.getElementById('fallback-section').style.display = 'none';
+            document.getElementById('launch-section').style.display = 'block';
+            
+            // Add bypass flag to form
+            const form = document.getElementById('lti-form');
+            const bypassInput = document.createElement('input');
+            bypassInput.type = 'hidden';
+            bypassInput.name = 'force_launch';
+            bypassInput.value = '1';
+            form.appendChild(bypassInput);
+        }
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        // Handle form submission
+        document.getElementById('lti-form').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('launch-btn');
+            const spinner = document.getElementById('launch-spinner');
+            
+            submitBtn.disabled = true;
+            spinner.style.display = 'inline-block';
+            updateStatus('🚀 Launching CanvasOps...', 'warning');
+        });
+        
+        // Auto-start test after page load
+        window.addEventListener('load', () => {
+            // Check if session already exists
+            const sessionExists = {{ debug_info.session_exists|yesno:"true,false" }};
+            const cookieTestSet = {{ debug_info.cookie_test_set|yesno:"true,false" }};
+            
+            if (sessionExists && cookieTestSet) {
+                updateStatus('✅ Session already established!', 'success');
+                document.getElementById('cookie-test-section').style.display = 'none';
+                document.getElementById('launch-section').style.display = 'block';
+            } else {
+                setTimeout(runCookieTest, 1000);
+            }
+        });
+        
+        // Debug information
+        var sessionExists = "{{ debug_info.session_exists|yesno:'true,false' }}";
+        var cookieTestSet = "{{ debug_info.cookie_test_set|yesno:'true,false' }}";
+        var userAgent = "{{ debug_info.user_agent|escapejs }}";
+        var sessionKey = "{{ session_key|escapejs }}";
+
+        var debugInfo = {
+            inIframe: window !== window.top,
+            sessionExists: sessionExists,
+            cookieTestSet: cookieTestSet,
+            userAgent: userAgent,
+            sessionKey: sessionKey,
+            currentCookies: document.cookie.split(';').length
+        };
+        console.log('LTI Login Debug Info:', debugInfo);
+    </script>
+</body>
+</html> 
