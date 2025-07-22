@@ -127,20 +127,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # LTI Configuration
 LTI_CONFIG = {
-    'https://aculeo.beta.instructure.com': {
-        'client_id': os.getenv('CANVAS_CLIENT_ID', '226430000000000272'),
-        'auth_login_url': 'https://aculeo.beta.instructure.com/api/lti/authorize_redirect',
-        'auth_token_url': 'https://aculeo.beta.instructure.com/login/oauth2/token',
-        'key_set_url': 'https://aculeo.beta.instructure.com/api/lti/security/jwks',
+    'https://aculeo.test.instructure.com': {
+        'client_id': os.getenv('CANVAS_CLIENT_ID'),
+        'deployment_id': os.getenv('CANVAS_DEPLOYMENT_ID'),
+        'auth_login_url': 'https://aculeo.test.instructure.com/api/lti/authorize_redirect',
+        'auth_token_url': 'https://aculeo.test.instructure.com/login/oauth2/token',
+        'key_set_url': 'https://aculeo.test.instructure.com/api/lti/security/jwks',
         'private_key_file': 'private.key',
-    },
-    'https://canvas.beta.instructure.com': {
-        'client_id': os.getenv('CANVAS_CLIENT_ID', '226430000000000272'),
-        'deployment_id': '2020:21ccbae6dc29eabcb50c0c0966d60ce6a98b21d8',
-        'auth_login_url': 'https://canvas.beta.instructure.com/api/lti/authorize_redirect',
-        'auth_token_url': 'https://canvas.beta.instructure.com/login/oauth2/token',
-        'key_set_url': 'https://canvas.beta.instructure.com/api/lti/security/jwks',
-        'private_key_file': '/tmp/canvas_ops_private.key',
     },
 }
 

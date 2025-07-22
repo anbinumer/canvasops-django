@@ -65,12 +65,12 @@ LTI_CONFIG = {
         'public_jwk_url': 'https://canvasops-django-production.up.railway.app/lti/jwks/',
     },
     'platforms': {
-        'https://canvas.instructure.com': {
+        'https://aculeo.test.instructure.com': {
             'client_id': os.getenv('CANVAS_CLIENT_ID'),
-            'auth_login_url': 'https://sso.canvaslms.com/api/lti/authorize_redirect',
-            'auth_token_url': 'https://sso.canvaslms.com/login/oauth2/token',
-            'key_set_url': 'https://sso.canvaslms.com/api/lti/security/jwks',
-            'deployment_ids': os.getenv('CANVAS_DEPLOYMENT_IDS', '').split(','),
+            'deployment_ids': os.getenv('CANVAS_DEPLOYMENT_ID', '').split(','),
+            'auth_login_url': 'https://aculeo.test.instructure.com/api/lti/authorize_redirect',
+            'auth_token_url': 'https://aculeo.test.instructure.com/login/oauth2/token',
+            'key_set_url': 'https://aculeo.test.instructure.com/api/lti/security/jwks',
         }
     }
 }
