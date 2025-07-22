@@ -188,3 +188,16 @@ X_FRAME_OPTIONS = 'ALLOWALL'  # Allow embedding in Canvas
 
 # Environment variables
 ENCRYPTION_KEY = os.getenv('ENCRYPTION_KEY')
+
+# --- Phase 1: Canvas iframe compatibility settings ---
+# Essential cookie settings for Canvas iframe embedding
+SESSION_COOKIE_SAMESITE = 'None'  # Required for cross-site iframe cookies
+SESSION_COOKIE_HTTPONLY = True
+SESSION_SAVE_EVERY_REQUEST = True  # Ensure session persistence in iframe
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_AGE = 3600  # 1 hour
+
+# Note: SESSION_COOKIE_SECURE and CSRF_COOKIE_SECURE already set above
+# Note: X_FRAME_OPTIONS already set to 'ALLOWALL' above
+# Note: CSRF_TRUSTED_ORIGINS already includes Canvas domains above
+# --- End Phase 1 settings ---
