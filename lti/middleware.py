@@ -90,3 +90,34 @@ class LTISessionMiddleware:
         
         response = self.get_response(request)
         return response 
+
+class LTIIframeMiddleware:
+    """Comprehensive middleware for LTI iframe compatibility"""
+    
+    def __init__(self, get_response):
+        self.get_response = get_response
+    
+    def __call__(self, request):
+        response = self.get_response(request)
+        
+        # Apply iframe compatibility to all LTI routes
+        if request.path.startswith('/lti/'):
+            # Essential iframe headers
+            response['X-Frame-Options'] = 'ALLOWALL'
+            response['Content-Security-Policy'] = "frame-ancestors *;"
+            
+            # Cross-origin headers for iframe compatibility
+            response['Cross-Origin-Embedder-Policy'] = 'unsafe-none'
+            response['Cross-Origin-Resource-Policy'] = 'cross-origin'
+            
+            # Additional headers to prevent iframe blocking
+            response['X-Content-Type-Options'] = 'nosniff'
+            response['Referrer-Policy'] = 'no-referrer-when-downgrade'
+            
+            # Ensure all cookies are iframe-compatible
+            for cookie in response.cookies.values():
+                cookie['samesite'] = 'None'
+                cookie['secure'] = True
+                cookie['httponly'] = True
+        
+        return response 

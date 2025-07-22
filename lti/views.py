@@ -80,6 +80,10 @@ def get_tool_conf():
 @xframe_options_exempt
 def login(request):
     """Handle OIDC login initiation"""
+    # Ensure session exists for iframe compatibility
+    if not request.session.session_key:
+        request.session.create()
+    
     try:
         tool_conf = get_tool_conf()
         launch_data_storage = get_launch_data_storage()
@@ -94,7 +98,14 @@ def login(request):
             # Fallback to default if not provided
             from django.urls import reverse
             target_link_uri = request.build_absolute_uri(reverse('lti_launch'))
-        return oidc_login.enable_check_cookies().redirect(target_link_uri)
+        
+        response = oidc_login.enable_check_cookies().redirect(target_link_uri)
+        
+        # Ensure iframe compatibility
+        response['X-Frame-Options'] = 'ALLOWALL'
+        response['Content-Security-Policy'] = 'frame-ancestors *;'
+        
+        return response
     except LtiException as e:
         return HttpResponse(f"OIDC Login Error: {str(e)}", status=400)
 
