@@ -32,17 +32,17 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    # LTI middleware MUST come early but after security
+    # LTI middleware that does NOT access request.session
     'lti.middleware.LTIEmbeddingMiddleware',
-    # Session middleware MUST come after LTI embedding middleware
+    # Session middleware must come BEFORE any middleware that uses request.session
     'django.contrib.sessions.middleware.SessionMiddleware',
-    # LTI session middleware MUST come after Django session middleware
+    # LTI middleware that needs request.session
     'lti.middleware.LTISessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # LTI security middleware should come last
+    # LTI security middleware (if it does not use request.session, can be here)
     'lti.middleware.LTISecurityMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
