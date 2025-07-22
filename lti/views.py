@@ -85,8 +85,9 @@ def login(request):
                 cookie['samesite'] = 'None'
                 cookie['secure'] = True
         
-        logger.info(f"OIDC redirect URL: {redirect_response.url}")
-        return redirect_response
+        redirect_url = redirect_response.url
+        logger.info(f"OIDC redirect URL: {redirect_url}")
+        return redirect(redirect_url)
         
     except Exception as e:
         logger.error(f"OIDC login failed: {str(e)}", exc_info=True)
