@@ -148,31 +148,58 @@ CACHES = {
     }
 }
 
-# Session configuration for LTI
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-SESSION_COOKIE_SECURE = True
+# LTI/iframe cookie compatibility
+SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SECURE = True  # Required for SameSite=None
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = 'None'  # CRITICAL for iframe
-SESSION_COOKIE_AGE = 86400
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
-# CSRF exemptions for LTI endpoints (handled by PyLTI1.3)
-CSRF_TRUSTED_ORIGINS = [
-    'https://canvas.instructure.com',
-    'https://*.instructure.com',
-    'https://aculeo.beta.instructure.com',
-    'https://canvas.beta.instructure.com',
-    'https://aculeo.test.instructure.com',
-    'https://canvasops-django-production.up.railway.app',
-]
+# Allow iframe embedding
+X_FRAME_OPTIONS = 'ALLOWALL'
+
+# CSRF settings for LTI
 CSRF_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SECURE = True
 
-# Additional security headers for Canvas embedding
+# Add Canvas domains to trusted origins
+CSRF_TRUSTED_ORIGINS = [
+    'https://canvasops-django-production.up.railway.app',  # Your deployed domain
+    'https://canvas.instructure.com',
+    'https://*.instructure.com',
+    'https://aculeo.beta.instructure.com',
+    'https://aculeo.test.instructure.com',
+    'https://*.beta.instructure.com',
+]
+
+# Session configuration
+SESSION_COOKIE_AGE = 3600  # 1 hour
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
+# Middleware (add LTI middleware if implemented)
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # LTI-specific middleware (uncomment if implemented)
+    'lti.middleware.LTIEmbeddingMiddleware',
+    'lti.middleware.LTISessionMiddleware',
+]
+
+# Security settings for production
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
 if not DEBUG:
+    SECURE_SSL_REDIRECT = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    USE_X_FORWARDED_HOST = True
-    USE_X_FORWARDED_PORT = True
 
 # Security Settings
 SECURE_SSL_REDIRECT = not DEBUG
