@@ -14,4 +14,7 @@ urlpatterns = [
     # Tool interface
     path('tools/', views.tool_selection, name='tool_selection'),
     path('submission-review/', views.submission_review, name='lti_submission_review'),
+    
+    # Test endpoints
+    path('iframe-test/', views.iframe_test, name='lti_iframe_test'),
 ]

@@ -39,7 +39,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',  # Disabled for LTI iframe compatibility
 ]
 
 ROOT_URLCONF = 'canvasops.urls'
@@ -198,6 +198,13 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_SAVE_EVERY_REQUEST = True  # Ensure session persistence in iframe
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_AGE = 3600  # 1 hour
+
+# Additional iframe compatibility settings
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Use database backend for reliability
+SESSION_COOKIE_NAME = 'canvasops_sessionid'  # Custom name to avoid conflicts
+SESSION_COOKIE_DOMAIN = None  # Allow for cross-domain
+SESSION_COOKIE_PATH = '/'
+CSRF_COOKIE_NAME = 'canvasops_csrftoken'  # Custom CSRF token name
 
 # Note: SESSION_COOKIE_SECURE and CSRF_COOKIE_SECURE already set above
 # Note: X_FRAME_OPTIONS already set to 'ALLOWALL' above
