@@ -1,5 +1,40 @@
 # CanvasOps LTI 1.3 Setup Guide
 
+## 🔄 What to Update When Changing Canvas Instance or Keys
+
+Whenever you switch to a new Canvas instance (e.g., from beta to test or production), or if you generate new keys or get a new Client ID/Deployment ID, update **all** of the following:
+
+- **lti_config.json**
+  - Update the Canvas instance URL, `client_id`, and `deployment_ids`.
+- **Railway (or deployment) environment variables**
+  - `CANVAS_CLIENT_ID`
+  - `CANVAS_DEPLOYMENT_ID`
+  - `CANVAS_INSTANCE_URL` (if used)
+- **.env file** (for local development, if used)
+  - Update the same variables as above.
+- **lti_setup_guide.md** (this file)
+  - Update any references to the current instance, Client ID, or Deployment ID for future reference.
+- **README.md or internal docs**
+  - Update any quickstart/setup instructions with the new values.
+- **CI/CD or deployment scripts**
+  - If you have scripts that set these variables, update them as well.
+
+> **After updating, always redeploy your app and test the LTI launch in the new Canvas instance.**
+
+---
+
+## 🚦 Which Setup Path Should I Follow?
+
+| Scenario                | Steps to Follow                |
+|-------------------------|-------------------------------|
+| First-time setup        | Steps 1 → 7 (all steps)       |
+| Reinstall after reset   | Steps 4 → 7 (skip 1–3)        |
+
+- **First-time setup:** You need to generate keys, configure environment, and set up everything from scratch.
+- **Reinstall (e.g., Canvas Beta reset):** Your keys and config are already set—just re-add the Developer Key and reinstall the app in Canvas.
+
+---
+
 ## Overview
 This guide walks through setting up full LTI 1.3 integration for CanvasOps with Canvas LMS.
 
@@ -9,6 +44,8 @@ This guide walks through setting up full LTI 1.3 integration for CanvasOps with 
 - Admin access to Canvas instance
 
 ## Step 1: Generate RSA Keys
+
+_Required for: **First-time setup only**_
 
 First, generate the RSA key pair needed for LTI 1.3:
 
@@ -24,18 +61,24 @@ This creates:
 
 ## Step 2: Update Environment Variables
 
+_Required for: **First-time setup only**_
+
 Add these to your Railway environment:
 
 ```env
 # Canvas OAuth (from Developer Key)
-CANVAS_CLIENT_ID=226430000000000272
-CANVAS_DEPLOYMENT_ID=2020:21ccbae6dc29eabcb50c0c0966d60ce6a98b21d8
+CANVAS_CLIENT_ID=YOUR_CLIENT_ID_HERE
+CANVAS_DEPLOYMENT_ID=YOUR_DEPLOYMENT_ID_HERE
 
 # Your Canvas instance URL (update this to your actual Canvas URL)
 CANVAS_INSTANCE_URL=https://aculeo.beta.instructure.com
 ```
 
+> **Note:** You will get the Client ID after creating the Developer Key (Step 4) and the Deployment ID after installing the LTI tool in a course (Step 5). You may need to return to this step to update these values.
+
 ## Step 3: Update LTI Configuration
+
+_Required for: **First-time setup only**_
 
 Update your `lti_config.json` with your Canvas details:
 
@@ -43,7 +86,7 @@ Update your `lti_config.json` with your Canvas details:
 {
     "https://aculeo.beta.instructure.com": {
         "default": true,
-        "client_id": "226430000000000272",
+        "client_id": "YOUR_CLIENT_ID_HERE",
         "auth_login_url": "https://aculeo.beta.instructure.com/api/lti/authorize_redirect",
         "auth_token_url": "https://aculeo.beta.instructure.com/login/oauth2/token",
         "auth_audience": null,
@@ -51,12 +94,16 @@ Update your `lti_config.json` with your Canvas details:
         "key_set": null,
         "private_key_file": "private.key",
         "public_key_file": "public.key",
-        "deployment_ids": ["2020:21ccbae6dc29eabcb50c0c0966d60ce6a98b21d8"]
+        "deployment_ids": ["YOUR_DEPLOYMENT_ID_HERE"]
     }
 }
 ```
 
+> **Note:** As above, you may need to return to this step after Steps 4 and 5 to fill in the actual Client ID and Deployment ID.
+
 ## Step 4: Create Canvas Developer Key
+
+_Required for: **First-time setup and reinstallation**_
 
 1. In Canvas Admin, go to **Admin → Developer Keys**
 2. Click **+ Developer Key → + LTI Key**
@@ -114,11 +161,13 @@ Configure Course Navigation:
 
 ## Step 5: Install in Canvas Course
 
+_Required for: **First-time setup and reinstallation**_
+
 ### As Admin:
 1. Go to **Admin → Settings → Apps**
 2. Click **+ App**
 3. Configuration Type: **By Client ID**
-4. Client ID: `226430000000000272`
+4. Client ID: `YOUR_CLIENT_ID_HERE`
 5. Click **Submit**
 
 ### As Instructor:
@@ -126,14 +175,20 @@ Configure Course Navigation:
 2. Find CanvasOps in the list
 3. Click **Add** or **Enable**
 
+> **Note:** After installing, you can find the Deployment ID in the Developer Key details. Update your environment variables and config files as needed.
+
 ## Step 6: Test the Integration
+
+_Required for: **First-time setup and reinstallation**_
 
 1. Navigate to your Canvas course
 2. Look for "CanvasOps" in the course navigation
 3. Click it to launch the tool
 4. You should see the tool selection page with your Canvas user info
 
-## Troubleshooting
+## Step 7: Troubleshooting & Security Checklist
+
+_Required for: **First-time setup and reinstallation (as needed)**_
 
 ### Common Issues:
 
@@ -172,7 +227,7 @@ LOGGING = {
 }
 ```
 
-## Security Checklist
+### Security Checklist
 
 - [ ] Private key is not in version control
 - [ ] HTTPS is enforced on Railway
@@ -180,6 +235,8 @@ LOGGING = {
 - [ ] CSRF protection is enabled (except for LTI endpoints)
 - [ ] Canvas roles are properly validated
 - [ ] API tokens are never stored persistently
+
+---
 
 ## Next Steps
 
