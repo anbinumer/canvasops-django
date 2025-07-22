@@ -77,6 +77,7 @@ def get_tool_conf():
 
 
 @csrf_exempt
+@xframe_options_exempt
 def login(request):
     """Handle OIDC login initiation"""
     try:
@@ -194,6 +195,8 @@ def submission_review(request):
     return render(request, 'lti/submission_review.html', context)
 
 
+@csrf_exempt
+@xframe_options_exempt
 def tool_selection(request):
     """Display available tools"""
     if 'canvas_user_id' not in request.session:
