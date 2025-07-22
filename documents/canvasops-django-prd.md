@@ -1,6 +1,6 @@
 # CanvasOps Django LTI – Product Requirements Document
 **Version:** 2.0 (Django Migration)  
-**Status:** Planning Phase  
+**Status:** In Progress  
 **Owner:** ACU Learning Technology Team  
 **Created:** January 2025
 
@@ -22,12 +22,13 @@ CanvasOps is migrating from React prototype to production-ready Python/Django LT
 - All LTI config URLs (login, launch, JWK) must match the deployed app's HTTPS URL exactly.
 - Double-check Client ID and Deployment ID in both lti_config.json and Canvas Developer Key.
 - For local testing, use ngrok or Railway HTTPS to avoid SameSite cookie and CORS issues.
+- **NEW:** Always confirm which Django template is rendered for each route before making UI changes. If multiple templates exist for similar pages, update all or unify them. Commit, push, and redeploy after template changes. Use Tailwind CSS CDN for rapid UI prototyping. Hard refresh and clear cache after deployment. If changes don't show, check for template caching or path mismatches.
 
 ### UI/UX Lessons Learned (Landing Page)
-- Always confirm which Django template is being rendered for each route before making UI changes. Use codebase search or view logic to verify.
-- If multiple apps (e.g., 'tools' and 'lti') have similarly named templates, update all relevant files or unify them to avoid confusion.
-- After updating templates, always commit, push, and redeploy before checking production.
-- Use Tailwind CSS via CDN for rapid prototyping and modern UI, but ensure the CDN link is present in the deployed template.
+- Find & Replace tool is now implemented, styled with ACU branding, and live in Canvas.
+- Human-centered language and feedback are used throughout the UI.
+- Tailwind CSS is loaded via CDN for rapid prototyping and modern UI.
+- Commit, push, and redeploy after template changes to ensure updates are visible.
 - Hard refresh the browser and clear any CDN or platform cache after deployment to see changes.
 - For AI agents: Always check both the view logic and template directory structure before making UI edits. Document which template is mapped to which route.
 - For human developers: If changes don't show up, check for template caching, static file issues, or mismatched template paths.
@@ -384,3 +385,32 @@ class ExecutionLog(models.Model):
 - Security dependencies added (cryptography, django-ratelimit, sentry-sdk) for production hardening.
 
 *This PRD serves as the foundation for migrating CanvasOps to a production-ready Python/Django LTI application with seamless Canvas integration.*
+
+---
+
+## Lessons Learned (LTI/Canvas Integration)
+
+- **Issuer Mismatch:** Ensure the `iss` (issuer) in Canvas matches exactly in your Django `LTI_CONFIG` and `lti_config.json`.
+- **Redirect URI:** The `redirect_uri` sent by your tool must match the Canvas Developer Key exactly, including trailing slashes and protocol (`https`).
+- **Client ID Consistency:** The `client_id` in Django and Canvas must match. Use environment variables to avoid hardcoding.
+- **Key Files:** Private and public keys must be in the correct format and location. Decode base64 keys if needed.
+- **CSRF Trusted Origins:** Add your deployed domain and all Canvas domains to `CSRF_TRUSTED_ORIGINS` in Django settings.
+- **Session & Cookies:** Set `SESSION_COOKIE_SAMESITE = 'None'` and `SESSION_COOKIE_SECURE = True` for LTI in iframes.
+- **target_link_uri:** Your OIDC login view must use the `target_link_uri` from the request if present.
+- **Testing:** Always test LTI launch in Canvas Beta before production.
+- **Environment Variables:** Set all required env vars (`CANVAS_CLIENT_ID`, secrets, etc.) in your deployment environment.
+- **Key Rotation:** Document how to update/rotate keys and update Canvas Developer Key if needed.
+
+## Deployment Checklist (One-Attempt Success)
+
+1. Set up Django project and install dependencies
+2. Configure LTI settings in Django (`settings.py` and `lti_config.json`)
+3. Generate and place private/public key files
+4. Set all required environment variables
+5. Register LTI tool in Canvas Developer Keys
+   - Use exact URLs for Redirect, OIDC, JWK, etc.
+6. Add all domains to CSRF trusted origins
+7. Deploy to production
+8. Test LTI launch from Canvas (Beta and/or Prod)
+9. Check logs for errors and verify session data
+10. Document any new issues or fixes

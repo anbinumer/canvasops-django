@@ -5,6 +5,8 @@
 ### TASK 1: IMMEDIATE SECURITY FIX (Priority 1)
 **CRITICAL**: Private key is exposed in repository - security breach
 
+- [x] Private key removed from git history and repository
+
 ```bash
 # 1. Remove private key from git history
 git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch private.key.b64' --prune-empty --tag-name-filter cat -- --all
@@ -20,6 +22,9 @@ python manage.py generate_lti_keys --force
 
 ### TASK 2: FIX COOKIE/IFRAME ISSUE (Priority 1)
 **Problem**: LTI launch blocked in Canvas iframe - users forced to open new tab
+
+- [x] Cookie and iframe settings updated in settings.py
+- [x] LTI launches now work directly in Canvas iframe
 
 **Replace settings.py with these critical sections:**
 
@@ -180,3 +185,4 @@ After implementation, verify:
 - Test each priority group before moving to next
 - Use git commits between major changes for rollback
 - Verify Railway deployment after each priority group
+- **NEW:** Always follow the commit-push-deploy cycle for every major change to ensure updates are visible in production.

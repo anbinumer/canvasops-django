@@ -2,11 +2,13 @@
 
 # IMMEDIATE SECURITY FIX
 @cursor: Remove private.key.b64 from repository and git history immediately
+- [x] Completed
 git rm --cached private.key.b64
 git commit -m "Remove exposed private key"
 
 # COOKIE FIX - Update these exact lines in settings.py
 @cursor: Replace the session/cookie configuration in canvasops/settings.py with:
+- [x] Completed
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'None'
@@ -16,6 +18,7 @@ CSRF_TRUSTED_ORIGINS = ['https://*.instructure.com', 'https://canvasops-django-p
 
 # VIEW DECORATORS - Add to lti/views.py
 @cursor: Add these imports and decorators to lti/views.py:
+- [x] Completed
 from django.views.decorators.clickjacking import xframe_options_exempt
 
 @csrf_exempt
@@ -27,6 +30,8 @@ def launch(request):
 @xframe_options_exempt  
 def login(request):
     # existing code
+
+# NOTE: Always follow the commit-push-deploy cycle for template/UI changes to ensure updates are visible in production.
 
 # DATABASE MODELS - Replace entire file
 @cursor: Replace lti/models.py completely with the production models from the artifacts

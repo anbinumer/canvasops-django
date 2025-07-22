@@ -29,8 +29,8 @@ psycopg2-binary==2.9.9
 ### LTI Integration Core
 - [x] Install and configure pylti1p3 package (using 2.0.0)
 - [x] Create LTI launch view and authentication (initial import fix, MessageLaunch)
-- [ ] Set up Canvas Developer Key configuration
-- [ ] Implement basic LTI tool registration
+- [x] Set up Canvas Developer Key configuration
+- [x] Implement basic LTI tool registration
 - [x] Test LTI launch flow in Canvas sandbox
 - [x] Add @csrf_exempt and @xframe_options_exempt decorators to LTI views for iframe/cookie compatibility
 - [x] Replace lti/models.py with production-ready models from artifact
@@ -65,11 +65,11 @@ psycopg2-binary==2.9.9
 - [ ] Create utility functions for common operations
 
 ### Find & Replace Tool Migration
-- [ ] Port existing Python script to Django task
-- [ ] Create tool configuration and input forms
-- [ ] Implement URL mapping validation
-- [ ] Add content type selection logic
-- [ ] Test against real Canvas course
+- [x] Port existing Python script to Django task
+- [x] Create tool configuration and input forms
+- [x] Implement URL mapping validation
+- [x] Add content type selection logic
+- [x] Test against real Canvas course
 
 ### Basic UI Implementation
 - [ ] Create base templates with Canvas styling
@@ -102,11 +102,11 @@ psycopg2-binary==2.9.9
 - [ ] Test file download in Railway
 
 ### UI Enhancements
-- [ ] Add Alpine.js for reactive components
-- [ ] Implement real-time progress updates
-- [ ] Create mobile-responsive layouts
-- [ ] Add loading states and error handling
-- [ ] Improve accessibility features
+- [x] Add Alpine.js for reactive components
+- [x] Implement real-time progress updates
+- [x] Create mobile-responsive layouts
+- [x] Add loading states and error handling
+- [x] Improve accessibility features
 - [x] Enhance landing page UI with Tailwind CSS (tools/tool_selection.html and lti/tool_selection.html)
 
 ## 🔒 Sprint 4: Security & Production (2 weeks)
@@ -235,6 +235,7 @@ Each sprint is complete when:
 - Hard refresh and clear cache after deployment.
 - For AI agents: Check view logic and template mapping before editing.
 - For humans: If changes don't show, check for template caching or path mismatches.
+- **NEW:** Use emotional support language in tool UIs to build user trust and confidence.
 
 ## Lessons Learnt
 

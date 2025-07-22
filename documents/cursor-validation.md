@@ -22,9 +22,9 @@
 ## 🏗️ LTI 1.3 Compliance
 
 ### Core LTI Features
-- [ ] **Launch Request**: Fully implemented ✅
-- [ ] **OIDC Login**: Needs state parameter validation ⚠️
-- [ ] **JWT Validation**: Partially implemented ⚠️
+- [x] **Launch Request**: Fully implemented ✅
+- [x] **OIDC Login**: Implemented ✅
+- [x] **JWT Validation**: Implemented ✅
 - [ ] **Deep Linking**: Stub implementation - needs completion ❌
 - [ ] **Assignment & Grade Services**: Partially implemented ⚠️
 - [ ] **Names & Role Provisioning**: Missing implementation ❌
@@ -93,6 +93,8 @@
 - [ ] Error tracking and alerting
 - [ ] User experience testing
 
+### After UI changes, always perform a hard refresh and clear browser cache to ensure updates are visible.
+
 ## 📚 Documentation
 
 ### Technical Documentation
@@ -108,6 +110,8 @@
 - [ ] FAQ and troubleshooting
 - [ ] Best practices guide
 - [ ] Accessibility documentation
+
+### User guides and screenshots are being created as features are finalized and deployed.
 
 ## 🚀 Deployment & Operations
 
