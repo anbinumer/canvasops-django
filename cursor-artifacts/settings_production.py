@@ -41,8 +41,8 @@ CSRF_COOKIE_SAMESITE = 'None'
 CSRF_TRUSTED_ORIGINS = [
     'https://canvas.instructure.com',
     'https://*.instructure.com',
-    'https://aculeo.beta.instructure.com',
     'https://canvasops-django-production.up.railway.app',
+    'https://aculeo.test.instructure.com',
 ]
 
 # Content Security Policy for Canvas embedding

@@ -166,7 +166,6 @@ CSRF_TRUSTED_ORIGINS = [
     'https://canvasops-django-production.up.railway.app',  # Your deployed domain
     'https://canvas.instructure.com',
     'https://*.instructure.com',
-    'https://aculeo.beta.instructure.com',
     'https://aculeo.test.instructure.com',
     'https://*.beta.instructure.com',
 ]

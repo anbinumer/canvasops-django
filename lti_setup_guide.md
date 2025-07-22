@@ -71,7 +71,7 @@ CANVAS_CLIENT_ID=YOUR_CLIENT_ID_HERE
 CANVAS_DEPLOYMENT_ID=YOUR_DEPLOYMENT_ID_HERE
 
 # Your Canvas instance URL (update this to your actual Canvas URL)
-CANVAS_INSTANCE_URL=https://aculeo.beta.instructure.com
+CANVAS_INSTANCE_URL=https://aculeo.test.instructure.com
 ```
 
 > **Note:** You will get the Client ID after creating the Developer Key (Step 4) and the Deployment ID after installing the LTI tool in a course (Step 5). You may need to return to this step to update these values.
@@ -84,13 +84,13 @@ Update your `lti_config.json` with your Canvas details:
 
 ```json
 {
-    "https://aculeo.beta.instructure.com": {
+    "https://aculeo.test.instructure.com": {
         "default": true,
         "client_id": "YOUR_CLIENT_ID_HERE",
-        "auth_login_url": "https://aculeo.beta.instructure.com/api/lti/authorize_redirect",
-        "auth_token_url": "https://aculeo.beta.instructure.com/login/oauth2/token",
+        "auth_login_url": "https://aculeo.test.instructure.com/api/lti/authorize_redirect",
+        "auth_token_url": "https://aculeo.test.instructure.com/login/oauth2/token",
         "auth_audience": null,
-        "key_set_url": "https://aculeo.beta.instructure.com/api/lti/security/jwks",
+        "key_set_url": "https://aculeo.test.instructure.com/api/lti/security/jwks",
         "key_set": null,
         "private_key_file": "private.key",
         "public_key_file": "public.key",

@@ -129,11 +129,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # LTI Configuration
 LTI_CONFIG = {
-    'https://aculeo.beta.instructure.com': {
+    'https://aculeo.test.instructure.com': {
         'client_id': os.getenv('CANVAS_CLIENT_ID', '226430000000000272'),
-        'auth_login_url': 'https://aculeo.beta.instructure.com/api/lti/authorize_redirect',
-        'auth_token_url': 'https://aculeo.beta.instructure.com/login/oauth2/token',
-        'key_set_url': 'https://aculeo.beta.instructure.com/api/lti/security/jwks',
+        'auth_login_url': 'https://aculeo.test.instructure.com/api/lti/authorize_redirect',
+        'auth_token_url': 'https://aculeo.test.instructure.com/login/oauth2/token',
+        'key_set_url': 'https://aculeo.test.instructure.com/api/lti/security/jwks',
         'private_key_file': 'private.key',
     },
     'https://canvas.beta.instructure.com': {
@@ -169,8 +169,8 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 CSRF_TRUSTED_ORIGINS = [
     'https://canvas.instructure.com',
     'https://*.instructure.com',
-    'https://aculeo.beta.instructure.com',
     'https://canvasops-django-production.up.railway.app',
+    'https://aculeo.test.instructure.com',
 ]
 CSRF_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SECURE = True
