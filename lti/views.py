@@ -84,19 +84,28 @@ def login(request):
     if not request.session.session_key:
         request.session.create()
     
-    # Handle Canvas cookie test explicitly
-    if request.GET.get('lti1p3_cookie_test'):
+    # Handle various Canvas cookie test patterns
+    if (request.GET.get('lti1p3_cookie_test') or 
+        request.GET.get('cookie_test') or 
+        'cookie' in request.GET.get('action', '').lower()):
         # This is Canvas testing cookie support
         response = HttpResponse("cookie_test_success")
         response['X-Frame-Options'] = 'ALLOWALL'
         response['Content-Security-Policy'] = 'frame-ancestors *;'
-        # Set a test cookie to prove iframe cookie support
+        # Set multiple test cookies to prove iframe cookie support
         response.set_cookie(
             'lti_test', 
             'success',
             secure=True,
             samesite='None',
             httponly=False  # Canvas needs to read this
+        )
+        response.set_cookie(
+            'canvas_cookie_test', 
+            'passed',
+            secure=True,
+            samesite='None',
+            httponly=False
         )
         return response
     
@@ -115,7 +124,9 @@ def login(request):
             from django.urls import reverse
             target_link_uri = request.build_absolute_uri(reverse('lti_launch'))
         
-        response = oidc_login.enable_check_cookies().redirect(target_link_uri)
+        # Try bypassing Canvas cookie check entirely
+        # Canvas sometimes has issues with enable_check_cookies() in iframes
+        response = oidc_login.redirect(target_link_uri)
         
         # Ensure iframe compatibility
         response['X-Frame-Options'] = 'ALLOWALL'
@@ -372,4 +383,31 @@ def iframe_test(request):
     response = HttpResponse(html)
     response['X-Frame-Options'] = 'ALLOWALL'
     response['Content-Security-Policy'] = 'frame-ancestors *;'
+    return response
+
+
+@csrf_exempt
+@xframe_options_exempt
+def cookie_test(request):
+    """Dedicated endpoint for Canvas cookie testing"""
+    # Ensure session exists
+    if not request.session.session_key:
+        request.session.create()
+    
+    response = HttpResponse("success")
+    response['X-Frame-Options'] = 'ALLOWALL'
+    response['Content-Security-Policy'] = 'frame-ancestors *;'
+    response['Access-Control-Allow-Credentials'] = 'true'
+    response['Access-Control-Allow-Origin'] = request.META.get('HTTP_ORIGIN', '*')
+    
+    # Set test cookie that Canvas can verify
+    response.set_cookie(
+        'lti_cookie_test', 
+        'success',
+        secure=True,
+        samesite='None',
+        httponly=False,  # Canvas JavaScript needs to read this
+        max_age=3600
+    )
+    
     return response

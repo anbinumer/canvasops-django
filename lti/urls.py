@@ -17,4 +17,5 @@ urlpatterns = [
     
     # Test endpoints
     path('iframe-test/', views.iframe_test, name='lti_iframe_test'),
+    path('cookie-test/', views.cookie_test, name='lti_cookie_test'),
 ]

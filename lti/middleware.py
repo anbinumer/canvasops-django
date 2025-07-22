@@ -104,7 +104,8 @@ class LTIIframeMiddleware:
         if request.path.startswith('/lti/'):
             # Essential iframe headers
             response['X-Frame-Options'] = 'ALLOWALL'
-            response['Content-Security-Policy'] = "frame-ancestors *;"
+            # More permissive CSP for Canvas compatibility
+            response['Content-Security-Policy'] = "frame-ancestors * 'self' https://*.instructure.com https://*.canvaslms.com;"
             
             # Cross-origin headers for iframe compatibility
             response['Cross-Origin-Embedder-Policy'] = 'unsafe-none'
@@ -116,7 +117,11 @@ class LTIIframeMiddleware:
             
             # Canvas-specific headers for cookie testing
             response['Access-Control-Allow-Credentials'] = 'true'
-            response['Access-Control-Allow-Origin'] = request.META.get('HTTP_ORIGIN', '*')
+            origin = request.META.get('HTTP_ORIGIN')
+            if origin and 'instructure.com' in origin:
+                response['Access-Control-Allow-Origin'] = origin
+            else:
+                response['Access-Control-Allow-Origin'] = '*'
             
             # Ensure all cookies are iframe-compatible
             for cookie in response.cookies.values():
