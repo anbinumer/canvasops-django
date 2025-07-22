@@ -78,16 +78,16 @@ def login(request):
         
         # Enable cookie checks and redirect
         redirect_response = oidc_login.enable_check_cookies().redirect(target_link_uri)
-        
+
         # Ensure response cookies are iframe-compatible
         if hasattr(redirect_response, 'cookies'):
             for cookie in redirect_response.cookies.values():
                 cookie['samesite'] = 'None'
                 cookie['secure'] = True
-        
-        redirect_url = redirect_response.url
-        logger.info(f"OIDC redirect URL: {redirect_url}")
-        return redirect(redirect_url)
+
+        # Use the original redirect_response directly
+        logger.info(f"OIDC redirecting with response: {redirect_response}")
+        return redirect_response
         
     except Exception as e:
         logger.error(f"OIDC login failed: {str(e)}", exc_info=True)
