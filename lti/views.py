@@ -8,9 +8,16 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 from django.urls import reverse
 from django.conf import settings
 from pylti1p3.contrib.django import DjangoOIDCLogin, DjangoMessageLaunch
-from .utils import get_tool_conf, get_launch_data_storage
 
 logger = logging.getLogger(__name__)
+
+def get_tool_conf():
+    # TODO: Implement or import actual logic
+    return None
+
+def get_launch_data_storage():
+    # TODO: Implement or import actual logic
+    return None
 
 @csrf_exempt
 @xframe_options_exempt
