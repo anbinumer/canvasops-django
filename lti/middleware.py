@@ -114,10 +114,16 @@ class LTIIframeMiddleware:
             response['X-Content-Type-Options'] = 'nosniff'
             response['Referrer-Policy'] = 'no-referrer-when-downgrade'
             
+            # Canvas-specific headers for cookie testing
+            response['Access-Control-Allow-Credentials'] = 'true'
+            response['Access-Control-Allow-Origin'] = request.META.get('HTTP_ORIGIN', '*')
+            
             # Ensure all cookies are iframe-compatible
             for cookie in response.cookies.values():
                 cookie['samesite'] = 'None'
                 cookie['secure'] = True
-                cookie['httponly'] = True
+                # Don't force httponly=True for all cookies as Canvas may need to read some
+                if not hasattr(cookie, 'httponly') or cookie.get('httponly') is None:
+                    cookie['httponly'] = True
         
         return response 

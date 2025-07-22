@@ -84,6 +84,22 @@ def login(request):
     if not request.session.session_key:
         request.session.create()
     
+    # Handle Canvas cookie test explicitly
+    if request.GET.get('lti1p3_cookie_test'):
+        # This is Canvas testing cookie support
+        response = HttpResponse("cookie_test_success")
+        response['X-Frame-Options'] = 'ALLOWALL'
+        response['Content-Security-Policy'] = 'frame-ancestors *;'
+        # Set a test cookie to prove iframe cookie support
+        response.set_cookie(
+            'lti_test', 
+            'success',
+            secure=True,
+            samesite='None',
+            httponly=False  # Canvas needs to read this
+        )
+        return response
+    
     try:
         tool_conf = get_tool_conf()
         launch_data_storage = get_launch_data_storage()
@@ -104,6 +120,15 @@ def login(request):
         # Ensure iframe compatibility
         response['X-Frame-Options'] = 'ALLOWALL'
         response['Content-Security-Policy'] = 'frame-ancestors *;'
+        
+        # Set additional cookies to prove iframe support
+        response.set_cookie(
+            'lti_state', 
+            'initiated',
+            secure=True,
+            samesite='None',
+            httponly=True
+        )
         
         return response
     except LtiException as e:
