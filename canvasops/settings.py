@@ -169,6 +169,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.instructure.com',
     'https://aculeo.beta.instructure.com',
     'https://canvas.beta.instructure.com',
+    'https://aculeo.test.instructure.com',
     'https://canvasops-django-production.up.railway.app',
 ]
 CSRF_COOKIE_SAMESITE = 'None'
