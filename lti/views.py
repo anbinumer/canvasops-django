@@ -80,7 +80,7 @@ def login(request):
         return redirect('lti_cookie_test')
     if request.method == 'GET':
         # Handle Canvas GET requests (tool selection)
-        return HttpResponseRedirect('/tool_selection/')
+        return HttpResponseRedirect('/lti/tools/')
     # POST request - OIDC initiation
     tool_conf = get_tool_conf()
     launch_data_storage = get_launch_data_storage()
@@ -171,7 +171,7 @@ def launch(request):
         request.session['lti_authenticated'] = True
         request.session.save()
         # Redirect to main application
-        return redirect('tool_selection')
+        return redirect('/lti/tools/')
     except Exception as e:
         logger.error(f"LTI Launch failed: {str(e)}", exc_info=True)
         return render(request, 'lti/launch_error.html', {
