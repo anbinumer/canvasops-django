@@ -318,20 +318,22 @@ def xml_config(request):
 @xframe_options_exempt
 def iframe_test(request):
     """Simple test view to verify iframe compatibility"""
-    html = """
+    session_id = request.session.session_key or "No session"
+    
+    html = f"""
     <!DOCTYPE html>
     <html>
     <head>
         <title>LTI Iframe Test</title>
         <style>
-            body { font-family: Arial, sans-serif; padding: 20px; background: #f0f8ff; }
-            .success { color: green; font-size: 18px; font-weight: bold; }
+            body {{ font-family: Arial, sans-serif; padding: 20px; background: #f0f8ff; }}
+            .success {{ color: green; font-size: 18px; font-weight: bold; }}
         </style>
     </head>
     <body>
         <div class="success">✅ Iframe Test Successful!</div>
         <p>If you can see this page without being forced to open in a new tab, iframe compatibility is working.</p>
-        <p>Session ID: {}</p>
+        <p>Session ID: {session_id}</p>
         <p>Headers set for iframe compatibility:</p>
         <ul>
             <li>X-Frame-Options: ALLOWALL</li>
@@ -340,7 +342,7 @@ def iframe_test(request):
         </ul>
     </body>
     </html>
-    """.format(request.session.session_key or "No session")
+    """
     
     response = HttpResponse(html)
     response['X-Frame-Options'] = 'ALLOWALL'
