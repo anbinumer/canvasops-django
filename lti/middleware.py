@@ -27,14 +27,16 @@ class LTIEmbeddingMiddleware(MiddlewareMixin):
             request.lti_embedding = True
             
             # Ensure session exists for LTI requests
-            if not hasattr(request, 'session') or not request.session.session_key:
-                # Force session creation
-                request.session.create()
-                logger.info(f"LTI: Created session {request.session.session_key}")
-            
-            # Log LTI request details
-            logger.info(f"LTI Request: {request.method} {request.path}")
-            logger.info(f"Session Key: {request.session.session_key}")
+            if hasattr(request, 'session'):
+                if not request.session.session_key:
+                    # Force session creation
+                    request.session.create()
+                    logger.info(f"LTI: Created session {request.session.session_key}")
+                # Log LTI request details
+                logger.info(f"LTI Request: {request.method} {request.path}")
+                logger.info(f"Session Key: {request.session.session_key}")
+            else:
+                logger.warning("LTIEmbeddingMiddleware: request.session is not available. Check middleware order.")
     
     def process_response(self, request, response):
         """Add iframe-friendly headers for LTI requests"""
@@ -73,18 +75,19 @@ class LTISessionMiddleware(MiddlewareMixin):
     def process_request(self, request):
         """Enhanced session handling for LTI requests"""
         if hasattr(request, 'lti_embedding'):
-            # Force session creation if it doesn't exist
-            if not request.session.session_key:
-                request.session.create()
-                logger.info(f"LTI Session: Created {request.session.session_key}")
-            
-            # Mark session as LTI-compatible
-            request.session['lti_compatible'] = True
-            request.session.modified = True
-            
-            # Log session information for debugging
-            logger.debug(f"LTI Session Key: {request.session.session_key}")
-            logger.debug(f"LTI Session Data Keys: {list(request.session.keys())}")
+            if hasattr(request, 'session'):
+                # Force session creation if it doesn't exist
+                if not request.session.session_key:
+                    request.session.create()
+                    logger.info(f"LTI Session: Created {request.session.session_key}")
+                # Mark session as LTI-compatible
+                request.session['lti_compatible'] = True
+                request.session.modified = True
+                # Log session information for debugging
+                logger.debug(f"LTI Session Key: {request.session.session_key}")
+                logger.debug(f"LTI Session Data Keys: {list(request.session.keys())}")
+            else:
+                logger.warning("LTISessionMiddleware: request.session is not available. Check middleware order.")
     
     def process_response(self, request, response):
         """Ensure session cookies are properly set for LTI"""
