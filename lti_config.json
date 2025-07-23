@@ -9,7 +9,7 @@
         "key_set": null,
         "private_key_file": "private.key",
         "public_key_file": "public.key",
-        "deployment_ids": ["2048:21ccbae6dc29eabcb50c0c0966d60ce6a98b21d8"]
+        "deployment_ids": ["2051:21ccbae6dc29eabcb50c0c0966d60ce6a98b21d8"]
     },
     "https://canvas.beta.instructure.com": {
         "default": false,
@@ -21,6 +21,6 @@
         "key_set": null,
         "private_key_file": "private.key",
         "public_key_file": "public.key",
-        "deployment_ids": ["2048:21ccbae6dc29eabcb50c0c0966d60ce6a98b21d8"]
+        "deployment_ids": ["2051:21ccbae6dc29eabcb50c0c0966d60ce6a98b21d8"]
     }
 }
