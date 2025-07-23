@@ -124,6 +124,14 @@ def login(request):
             from django.urls import reverse
             target_link_uri = request.build_absolute_uri(reverse('lti_launch'))
         
+        # Ensure consistent trailing slash for Canvas compatibility
+        if not target_link_uri.endswith('/'):
+            target_link_uri += '/'
+        
+        # Debug logging (remove in production)
+        print(f"[DEBUG] Target Link URI: {target_link_uri}")
+        print(f"[DEBUG] Request build_absolute_uri: {request.build_absolute_uri(reverse('lti_launch'))}")
+        
         # Try bypassing Canvas cookie check entirely
         # Canvas sometimes has issues with enable_check_cookies() in iframes
         response = oidc_login.redirect(target_link_uri)
